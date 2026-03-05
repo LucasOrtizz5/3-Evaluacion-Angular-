@@ -59,6 +59,26 @@
                     <input matInput type="password" formControlName="password" appPasswordStrength
                       (strengthChange)="onPasswordStrengthChange($event)">
                   </mat-form-field>
+
+                  <!-- Barra de Fortaleza -->
+                  <div class="password-strength-container">
+                    <mat-progress-bar
+                      mode="determinate"
+                      [value]="passwordState.percentage"
+                      [color]="passwordState.strength === 'fuerte' ? 'accent' : (passwordState.strength === 'media' ? 'warn' : 'primary')"
+                      class="mb-2">
+                    </mat-progress-bar>
+
+                    @if (passwordState.percentage > 0) {
+                      <small class="d-block" [ngClass]="{
+                        'text-danger': passwordState.strength === 'débil',
+                        'text-warning': passwordState.strength === 'media',
+                        'text-success': passwordState.strength === 'fuerte'
+                      }">
+                        Fortaleza: <strong>{{ passwordState.strength | uppercase }}</strong>
+                      </small>
+                    }
+                  </div>
                 </div>
 
                 <!-- Reglas -->

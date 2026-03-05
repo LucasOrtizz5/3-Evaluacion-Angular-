@@ -13,3 +13,12 @@
   opacity: 1;
   font-weight: 500;
 }
+
+/* Password Strength Bar */
+.password-strength-container {
+  padding: 0 2px;
+}
+
+.password-strength-container mat-progress-bar {
+  border-radius: 4px;
+}

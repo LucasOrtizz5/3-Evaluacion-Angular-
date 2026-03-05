@@ -3,7 +3,7 @@ import { AuthService } from '../../services/auth';
 import { Router, RouterLink } from '@angular/router';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { PasswordStrengthDirective } from '../../../../shared/directives/password-strength';
+import { PasswordStrengthDirective, PasswordStrengthState } from '../../../../shared/directives/password-strength';
 import { OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { FormGroup } from '@angular/forms';
@@ -13,11 +13,12 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 @Component({
   selector: 'app-register-page',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, PasswordStrengthDirective, MatFormFieldModule, MatInputModule, MatButtonModule, MatCardModule, MatSnackBarModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, PasswordStrengthDirective, MatFormFieldModule, MatInputModule, MatButtonModule, MatCardModule, MatSnackBarModule, MatProgressBarModule],
   templateUrl: './register-page.html',
   styleUrl: './register-page.css'
 })
@@ -35,10 +36,12 @@ export class RegisterPage implements OnInit, OnDestroy {
 
   formError = false;
 
-  passwordState = {
+  passwordState: PasswordStrengthState = {
     minLength: false,
     uppercase: false,
-    number: false
+    number: false,
+    strength: 'débil',
+    percentage: 0
   };
 
   ngOnInit(): void {
@@ -48,13 +51,7 @@ export class RegisterPage implements OnInit, OnDestroy {
       password: ['', [Validators.required, Validators.minLength(6)]]
     });
 
-    // Ejemplo real de suscripción
-    this.subscriptions.push(
-      this.registerForm.valueChanges.subscribe(value => {
-      })
-    );
-
-    // El cartel de alerta de completar el formulario desaparece cuando el formulario es válido
+    // Suscribirse a los cambios de estado del formulario para mostrar/ocultar errores en tiempo real
     this.subscriptions.push(
       this.registerForm.statusChanges.subscribe(status => {
         if (status === 'VALID') {
@@ -107,7 +104,7 @@ export class RegisterPage implements OnInit, OnDestroy {
     this.subscriptions.forEach(sub => sub.unsubscribe());
   }
 
-  onPasswordStrengthChange(state: any) {
+  onPasswordStrengthChange(state: PasswordStrengthState): void {
     this.passwordState = state;
   }
 
