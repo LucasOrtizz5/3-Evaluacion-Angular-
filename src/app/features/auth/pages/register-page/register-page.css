@@ -1,43 +1,4 @@
-.background {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-}
-
-.register-card {
-  width: 100%;
-  max-width: 28rem;
-  margin-inline: auto;
-
-  background: rgba(255, 255, 255, 0.12);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-
-  border-radius: 1.75rem;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
-
-  color: white;
-}
-
-/* labels */
-
-.register-card mat-label {
-  color: rgba(255,255,255,0.7);
-}
-
-/* input text */
-
-.register-card input {
-  color: white;
-}
-
-/* password rules */
-
+/* Password rules - específico de register */
 .password-rules .rule {
   opacity: 0.6;
   transition: all 0.25s ease;
@@ -50,18 +11,5 @@
 .password-rules .rule.valid {
   color: #8fffaa;
   opacity: 1;
-  font-weight: 400;
-}
-
-/* error message */
-
-.form-alert {
-  margin-top: 0.625rem;
-  padding: 0.625rem;
-  border-radius: 0.5rem;
-
-  background: rgba(255, 0, 0, 0.15);
-  color: #ffb3b3;
-
-  text-align: center;
+  font-weight: 500;
 }

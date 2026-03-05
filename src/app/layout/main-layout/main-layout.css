@@ -1,0 +1,18 @@
+.active-tab {
+  background-color: #000 !important;
+  color: #fff !important;
+  font-weight: bold;
+}
+
+.bg-dark-custom {
+  background-color: #333333 !important;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.cursor-pointer:hover {
+  color: #fff !important;
+}

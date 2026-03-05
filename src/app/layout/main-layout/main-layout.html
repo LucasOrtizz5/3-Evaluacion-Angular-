@@ -1,3 +1,53 @@
-<p>main-layout works!</p>
-<h2 style="color:red;">MAIN LAYOUT FUNCIONA</h2>
-<router-outlet></router-outlet>
+<div class="d-flex flex-column min-vh-100">
+
+  <!-- NAVBAR -->
+  <nav class="navbar navbar-expand-lg navbar-dark px-2"
+       style="border-bottom: 1px solid var(--bs-primary); background-color: rgba(0,0,0,0.9);">
+
+    <div class="container-fluid">
+
+      <!-- Brand -->
+      <a class="navbar-brand text-secondary"
+         routerLink="/"
+         routerLinkActive="active-tab"
+         [routerLinkActiveOptions]="{ exact: true }">
+        Pre evaluacion angular 2
+      </a>
+
+      <!-- BOTON HAMBURGUESA MOBILE -->
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-bs-toggle="collapse"
+        data-bs-target="#navbarContent">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <!-- CONTENIDO COLAPSABLE -->
+      <div class="collapse navbar-collapse" id="navbarContent">
+
+        <!-- DERECHA -->
+        <div class="d-flex flex-column flex-lg-row ms-auto">
+          @if (isAuthenticated) {
+          <span class="text-secondary px-lg-3 py-1">{{ user?.name }}</span>
+          <span class="text-secondary px-lg-3 py-1 cursor-pointer" (click)="goToProfile()">Profile</span>
+          <span class="text-secondary px-lg-3 py-1 cursor-pointer" (click)="logout()">Log Out</span>
+          }
+        </div>
+
+      </div>
+
+    </div>
+  </nav>
+
+  <!-- CONTENIDO -->
+  <div class="container-fluid bg-dark-custom text-light p-0">
+    <router-outlet></router-outlet>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="bg-black text-center text-light py-2 mt-auto">
+    © Pre evaluacion angular 2 - All rights reserved to Lucas Ortiz
+  </footer>
+
+</div>

@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { AuthService } from '../../services/auth';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { PasswordStrengthDirective } from '../../../../shared/directives/password-strength';
@@ -17,7 +17,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 @Component({
   selector: 'app-register-page',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, PasswordStrengthDirective, MatFormFieldModule, MatInputModule, MatButtonModule, MatCardModule, MatSnackBarModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, PasswordStrengthDirective, MatFormFieldModule, MatInputModule, MatButtonModule, MatCardModule, MatSnackBarModule],
   templateUrl: './register-page.html',
   styleUrl: './register-page.css'
 })
@@ -71,6 +71,16 @@ export class RegisterPage implements OnInit, OnDestroy {
       this.registerForm.markAllAsTouched();
 
       this.snackBar.open('Completá correctamente el formulario', 'Cerrar', {
+        duration: 3000
+      });
+      return;
+    }
+
+    // Verificar si el email ya está registrado
+    const email = this.registerForm.value.email;
+    if (this.authService.emailExists(email)) {
+      this.formError = true;
+      this.snackBar.open('Este email ya está registrado. Por favor usá otro.', 'Cerrar', {
         duration: 3000
       });
       return;

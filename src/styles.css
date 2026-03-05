@@ -1,3 +1,80 @@
 @import 'bootstrap/dist/css/bootstrap.min.css';
 
 /* You can add global styles to this file, and also import other style files */
+
+/* Shared Auth Styles */
+
+/* CSS Variables */
+:root {
+  --bg-gradient-1: #0f0c29;
+  --bg-gradient-2: rgba(81, 110, 168, 1);
+  --bg-gradient-3: #302b63;
+  --card-bg: #302b63;
+  --card-border: var(--bs-primary);
+  --label-color: rgba(255, 255, 255, 0.7);
+  --backdrop-blur: 18px;
+  --border-radius: 1.75rem;
+}
+
+/* Background */
+.background {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--bg-gradient-1), var(--bg-gradient-2), var(--bg-gradient-3)) !important;
+}
+
+/* Auth Card Base */
+.auth-card {
+  width: 100%;
+  max-width: 28rem;
+  margin-inline: auto;
+
+  background: var(--card-bg) !important;
+  backdrop-filter: blur(var(--backdrop-blur)) !important;
+  -webkit-backdrop-filter: blur(var(--backdrop-blur)) !important;
+
+  border-radius: var(--border-radius) !important;
+  border: 1px solid var(--card-border) !important;
+
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35) !important;
+
+  color: white !important;
+}
+
+/* Labels */
+.auth-card mat-label {
+  color: var(--label-color) !important;
+}
+
+/* Input Text */
+.auth-card input {
+  color: white !important;
+}
+
+/* Form Alert */
+.form-alert {
+  margin-top: 0.625rem;
+  padding: 0.625rem;
+  border-radius: 0.5rem;
+
+  background: rgba(255, 0, 0, 0.15);
+  color: #ffb3b3;
+
+  text-align: center;
+}
+
+/* Auth Link */
+.auth-link {
+  color: #7dd3fc;
+  text-decoration: none;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.auth-link:hover {
+  color: #38bdf8;
+  text-decoration: underline;
+}

@@ -1,8 +1,8 @@
 import { Component, inject, OnInit, OnDestroy } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { FormBuilder, Validators, ReactiveFormsModule, FormGroup } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -12,13 +12,13 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
-  selector: 'app-profile-page',
+  selector: 'app-login-page',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatCardModule, MatSnackBarModule],
-  templateUrl: './profile-page.html',
-  styleUrl: './profile-page.css'
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, MatFormFieldModule, MatInputModule, MatButtonModule, MatCardModule, MatSnackBarModule],
+  templateUrl: './login-page.html',
+  styleUrl: './login-page.css'
 })
-export class ProfilePage implements OnInit, OnDestroy {
+export class LoginPage implements OnInit, OnDestroy {
 
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
@@ -27,19 +27,18 @@ export class ProfilePage implements OnInit, OnDestroy {
 
   private subscriptions: Subscription[] = [];
 
-  user = this.authService.getUser();
-  profileForm!: FormGroup;
+  loginForm!: FormGroup;
   formError = false;
 
   ngOnInit(): void {
-    this.profileForm = this.fb.group({
-      name: [this.user?.name || '', Validators.required],
-      email: [this.user?.email || '', [Validators.required, Validators.email]]
+    this.loginForm = this.fb.group({
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required, Validators.minLength(6)]]
     });
 
     // El cartel de alerta desaparece cuando el formulario es válido
     this.subscriptions.push(
-      this.profileForm.statusChanges.subscribe(status => {
+      this.loginForm.statusChanges.subscribe(status => {
         if (status === 'VALID') {
           this.formError = false;
         }
@@ -47,10 +46,10 @@ export class ProfilePage implements OnInit, OnDestroy {
     );
   }
 
-  handleSave(): void {
-    if (this.profileForm.invalid) {
+  handleSubmit(): void {
+    if (this.loginForm.invalid) {
       this.formError = true;
-      this.profileForm.markAllAsTouched();
+      this.loginForm.markAllAsTouched();
 
       this.snackBar.open('Completá correctamente el formulario', 'Cerrar', {
         duration: 3000
@@ -60,24 +59,20 @@ export class ProfilePage implements OnInit, OnDestroy {
 
     this.formError = false;
 
-    // Actualizar información del usuario
-    const updatedUser = {
-      ...this.user,
-      ...this.profileForm.value
-    };
+    // Validar credenciales contra localStorage
+    const loginResult = this.authService.login(this.loginForm.value.email, this.loginForm.value.password);
 
-    // Guardar en localStorage (simulando actualización)
-    localStorage.setItem('user', JSON.stringify(updatedUser));
-    this.user = updatedUser;
-
-    this.snackBar.open('Perfil actualizado exitosamente 🎉', 'Cerrar', {
-      duration: 3000
-    });
-  }
-
-  logout() {
-    this.authService.logout();
-    this.router.navigate(['/auth/register']);
+    if (loginResult.success) {
+      this.snackBar.open('¡Bienvenido de vuelta! 🎉', 'Cerrar', {
+        duration: 3000
+      });
+      this.router.navigate(['/auth/profile']);
+    } else {
+      this.formError = true;
+      this.snackBar.open(loginResult.message, 'Cerrar', {
+        duration: 3000
+      });
+    }
   }
 
   ngOnDestroy(): void {
