@@ -1,0 +1,8 @@
+<h2>Perfil</h2>
+
+@if (user) {
+  <p><strong>Nombre:</strong> {{ user.name }}</p>
+  <p><strong>Email:</strong> {{ user.email }}</p>
+
+  <button (click)="logout()">Cerrar sesión</button>
+}
