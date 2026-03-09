@@ -1,1 +1,14 @@
 /* Login page - usando estilos compartidos de styles.css */
+
+a.auth-link {
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+a.auth-link:hover {
+  opacity: 0.7;
+}
+
+hr {
+  opacity: 0.25;
+}

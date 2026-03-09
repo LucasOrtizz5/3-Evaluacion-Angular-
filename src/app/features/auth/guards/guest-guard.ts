@@ -6,9 +6,9 @@ export const guestGuard: CanActivateFn = () => {
   const authService = inject(AuthService);
   const router = inject(Router);
 
-  // Si el usuario ya está autenticado, redirige al perfil y bloquea el acceso a la ruta de registro.
+  // Si el usuario ya está autenticado, redirige a characters y bloquea el acceso a auth pages.
   if (authService.isAuthenticated()) {
-    router.navigate(['/auth/profile']);
+    router.navigate(['/characters']);
     return false;
   }
 

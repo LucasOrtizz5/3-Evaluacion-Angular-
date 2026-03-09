@@ -9,6 +9,8 @@
   --bg-gradient-1: #0f0c29;
   --bg-gradient-2: rgba(81, 110, 168, 1);
   --bg-gradient-3: #302b63;
+  --bg-dark-gray: #333333;
+  --bg-dark-grey-2:rgba(0,0,0,0.9);;
   --card-bg: #302b63;
   --card-border: var(--bs-primary);
   --label-color: rgba(255, 255, 255, 0.7);
@@ -22,7 +24,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, var(--bg-gradient-1), var(--bg-gradient-2), var(--bg-gradient-3)) !important;
+  background: var(--bg-dark-gray);
 }
 
 /* Auth Card Base */
@@ -30,13 +32,9 @@
   width: 100%;
   max-width: 28rem;
   margin-inline: auto;
-
-  background: var(--card-bg) !important;
+  background: var(--bg-dark-grey-2) !important;
   backdrop-filter: blur(var(--backdrop-blur)) !important;
   -webkit-backdrop-filter: blur(var(--backdrop-blur)) !important;
-
-  border-radius: var(--border-radius) !important;
-  border: 1px solid var(--card-border) !important;
 
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35) !important;
 
@@ -67,7 +65,7 @@
 
 /* Auth Link */
 .auth-link {
-  color: #7dd3fc;
+  color: var(--bs-primary);
   text-decoration: none;
   font-weight: 500;
   cursor: pointer;
@@ -75,6 +73,6 @@
 }
 
 .auth-link:hover {
-  color: #38bdf8;
+  color: var(--bs-primary);
   text-decoration: underline;
 }

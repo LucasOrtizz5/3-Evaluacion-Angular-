@@ -1,7 +1,23 @@
+.nav-link {
+  padding-top: 1rem !important;
+  padding-bottom: 1rem !important;
+  margin-top: -0.5rem;
+  margin-bottom: -0.5rem;
+  display: flex;
+  align-items: center;
+}
+
 .active-tab {
   background-color: #000 !important;
   color: #fff !important;
   font-weight: bold;
+}
+
+.navbar-brand {
+  padding-top: 0.5rem !important;
+  padding-bottom: 0.5rem !important;
+  display: flex;
+  align-items: center;
 }
 
 .bg-dark-custom {
@@ -11,6 +27,10 @@
 .cursor-pointer {
   cursor: pointer;
   transition: color 0.3s ease;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
 }
 
 .cursor-pointer:hover {

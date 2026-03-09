@@ -9,7 +9,7 @@
         <mat-card class="auth-card p-3 p-md-4">
 
           <mat-card-header class="text-center mb-4">
-            <mat-card-title>Iniciar Sesión</mat-card-title>
+            <mat-card-title>Sign In</mat-card-title>
           </mat-card-header>
 
           <mat-card-content>
@@ -21,18 +21,18 @@
                 <!-- Email -->
                 <div class="col-12">
                   <mat-form-field appearance="outline" class="w-100 mb-0">
-                    <mat-label>Email</mat-label>
+                    <mat-label>Email Address</mat-label>
                     <input matInput type="email" formControlName="email">
 
                     @if (loginForm.get('email')?.hasError('required')) {
                     <mat-error>
-                      El email es obligatorio
+                      Email is required
                     </mat-error>
                     }
 
                     @if (loginForm.get('email')?.hasError('email')) {
                     <mat-error>
-                      El formato del email no es válido
+                      Invalid email format
                     </mat-error>
                     }
                   </mat-form-field>
@@ -41,49 +41,58 @@
                 <!-- Password -->
                 <div class="col-12">
                   <mat-form-field appearance="outline" class="w-100 mb-0">
-                    <mat-label>Contraseña</mat-label>
+                    <mat-label>Password</mat-label>
                     <input matInput type="password" formControlName="password">
 
                     @if (loginForm.get('password')?.hasError('required')) {
                     <mat-error>
-                      La contraseña es obligatoria
+                      Password is required
                     </mat-error>
                     }
 
                     @if (loginForm.get('password')?.hasError('minlength')) {
                     <mat-error>
-                      La contraseña debe tener mínimo 6 caracteres
+                      Password must be at least 6 characters
                     </mat-error>
                     }
                   </mat-form-field>
                 </div>
 
+                <!-- Remember me -->
+                <div class="col-12">
+                  <mat-checkbox color="primary">Remember me</mat-checkbox>
+                </div>
+
                 <!-- Botón -->
-                <div class="col-12 d-flex justify-content-center mt-4">
-
-                  <button mat-raised-button color="primary" type="submit" class="px-5 py-2"
+                <div class="col-12 d-flex justify-content-center mt-3">
+                  <button mat-raised-button color="primary" type="submit" class="w-100"
                     [disabled]="loginForm.invalid">
-                    Iniciar Sesión
+                    Sign In
                   </button>
-
                 </div>
 
                 <!-- Error -->
                 @if (formError) {
                 <div class="col-12">
-
                   <div class="form-alert">
-                    Email o contraseña incorrectos.
+                    Email or password incorrect.
                   </div>
-
                 </div>
                 }
 
-                <!-- Link a Registro -->
-                <div class="col-12 text-center">
-                  <p class="mb-0">
-                    ¿No sos usuario? <a routerLink="/auth/register" class="auth-link">Regístrate aquí</a>
-                  </p>
+                <!-- Divisor -->
+                <div class="col-12">
+                  <hr class="border-secondary">
+                </div>
+
+                <!-- Links -->
+                <div class="col-12 d-flex justify-content-between align-items-center">
+                  <a routerLink="/auth/register" class="auth-link">
+                    New around here? Sign up
+                  </a>
+                  <a class="auth-link text-end">
+                    Forgot password?
+                  </a>
                 </div>
               </div>
             </form>

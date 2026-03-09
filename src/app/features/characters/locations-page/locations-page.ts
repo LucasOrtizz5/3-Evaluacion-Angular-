@@ -9,5 +9,5 @@ import { CommonModule } from '@angular/common';
   styleUrl: './locations-page.css'
 })
 export class LocationsPage {
-  
+
 }
