@@ -30,29 +30,29 @@ export const routes: Routes = [
     path: 'characters',
     canActivate: [authGuard],
     loadComponent: () =>
-      import('./features/characters/characters-page/characters-page')
+      import('./features/characters/pages/characters-page/characters-page')
         .then(m => m.CharactersPage)
   },
   {
     path: 'characters/:id',
     canActivate: [authGuard],
     loadComponent: () =>
-      import('./features/characters/character-detail/character-detail')
-        .then(m => m.CharacterDetail)
+      import('./features/characters/pages/character-detail-page/character-detail-page')
+        .then(m => m.CharacterDetailPage)
   },
   // Rutas de Episodes y Locations
   {
     path: 'episodes',
     canActivate: [authGuard],
     loadComponent: () =>
-      import('./features/characters/episodes-page/episodes-page')
+      import('./features/characters/pages/episodes-page/episodes-page')
         .then(m => m.EpisodesPage)
   },
   {
     path: 'locations',
     canActivate: [authGuard],
     loadComponent: () =>
-      import('./features/characters/locations-page/locations-page')
+      import('./features/characters/pages/locations-page/locations-page')
         .then(m => m.LocationsPage)
   },
   // Redirect por defecto a characters (si está autenticado irá a characters, si no, el guard redirige a login)
@@ -60,5 +60,12 @@ export const routes: Routes = [
     path: '',
     redirectTo: 'characters',
     pathMatch: 'full'
+  },
+  // Ruta wildcard para URLs inexistentes
+  {
+    path: '**',
+    loadComponent: () =>
+      import('./shared/pages/not-found-page/not-found-page')
+        .then(m => m.NotFoundPage)
   }
 ];

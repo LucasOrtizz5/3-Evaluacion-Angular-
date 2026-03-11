@@ -1,5 +1,5 @@
 <nav class="bg-black bg-opacity-50 p-2 rounded breadcrumb-nav">
-  @for (item of items; track item; let last = $last) {
+  @for (item of visibleItems; track item; let last = $last) {
     @if (item.url && !last) {
       <a [routerLink]="item.url" class="text-decoration-none breadcrumb-link">{{ item.label }}</a>
     } @else {

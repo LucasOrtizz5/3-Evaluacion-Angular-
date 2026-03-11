@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, effect, inject, signal } from '@angular/core';
 import { RouterOutlet, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../features/auth/services/auth';
@@ -11,39 +11,41 @@ import { CharactersService } from '../../features/characters/services/characters
   templateUrl: './main-layout.html',
   styleUrl: './main-layout.css'
 })
-export class MainLayout implements OnInit {
+export class MainLayout {
   private authService = inject(AuthService);
   private characterService = inject(CharactersService);
   private router = inject(Router);
 
-  charactersCount: number = 0;
+  readonly charactersCount = signal(0);
+  readonly user = this.authService.currentUser;
+  readonly isAuthenticated = this.authService.authenticated;
 
-  get user() {
-    return this.authService.getUser();
+  constructor() {
+    effect(() => {
+      if (this.isAuthenticated()) {
+        this.loadCharactersCount();
+        return;
+      }
+
+      this.charactersCount.set(0);
+    });
   }
 
-  get isAuthenticated() {
-    return this.authService.isAuthenticated();
-  }
-
-  ngOnInit(): void {
-    // Obtener la cantidad real de personajes desde la API
-    if (this.isAuthenticated) {
-      this.characterService.getCharacters(1).subscribe({
-        next: (response) => {
-          this.charactersCount = response.info.count;
-        },
-        error: (err) => {
-          console.error('Error fetching characters count:', err);
-          this.charactersCount = 0;
-        }
-      });
-    }
+  private loadCharactersCount(): void {
+    this.characterService.getCharacters(1).subscribe({
+      next: (response) => {
+        this.charactersCount.set(response.info.count);
+      },
+      error: (err) => {
+        console.error('Error fetching characters count:', err);
+        this.charactersCount.set(0);
+      }
+    });
   }
 
   logout(): void {
     this.authService.logout();
-    this.router.navigate(['/auth/register']);
+    this.router.navigate(['/auth/login']);
   }
 
   goToProfile(): void {

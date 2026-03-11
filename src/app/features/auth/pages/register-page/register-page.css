@@ -8,20 +8,33 @@
   padding-bottom: 0;
 }
 
-.password-strength-container {
-  width: 100%;
-  padding: 0 2px;
+.password-requirements {
+  display: grid;
+  gap: 0.375rem;
 }
 
-.password-strength-container mat-progress-bar {
-  border-radius: 4px;
-  overflow: hidden;
-}
-
-.password-strength-label {
-  display: inline-block;
+.password-requirement {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #6b7280;
   font-size: 0.875rem;
-  font-weight: 600;
+  line-height: 1.25rem;
+}
+
+.password-requirement mat-icon {
+  width: 1rem;
+  height: 1rem;
+  font-size: 1rem;
+  color: #9ca3af;
+}
+
+.password-requirement--met {
+  color: #2e7d32;
+}
+
+.password-requirement--met mat-icon {
+  color: #2e7d32;
 }
 
 @media (max-width: 767.98px) {

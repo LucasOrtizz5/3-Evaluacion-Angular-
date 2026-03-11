@@ -15,4 +15,8 @@ export interface BreadcrumbItem {
 })
 export class BreadcrumbComponent {
   @Input() items: BreadcrumbItem[] = [];
+
+  get visibleItems(): BreadcrumbItem[] {
+    return this.items.filter(item => item.label?.trim().length > 0);
+  }
 }

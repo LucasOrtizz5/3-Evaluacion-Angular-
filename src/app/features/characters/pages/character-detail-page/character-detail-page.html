@@ -4,7 +4,7 @@
     <app-breadcrumb [items]="[
       { label: 'Home', url: '/' },
       { label: 'Characters', url: '/characters' },
-      { label: character()?.name || 'Character Detail' }
+      { label: character()?.name || '' }
     ]"></app-breadcrumb>
   </div>
 
@@ -54,9 +54,9 @@
             <div class="card-header fw-bold border-secondary fs-5">
               List of Episodes appearances
             </div>
-            <div #episodesContainer class="card-body p-3 d-flex flex-column flex-grow-1">
+            <div #episodesContainer class="card-body p-3 d-flex flex-column grow">
 
-              <div class="flex-grow-1 overflow-auto">
+              <div class="grow overflow-auto">
                 @for (ep of visibleEpisodes(); track ep.id) {
                 <div class="episode-item text-primary small mb-1">
                   Episode {{ ep.id }} - {{ ep.name }}

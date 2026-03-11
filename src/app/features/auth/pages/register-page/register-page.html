@@ -22,13 +22,13 @@
                   <div class="d-flex flex-column">
                     <label class="auth-field-label">Full Name</label>
                     <mat-form-field appearance="outline" class="w-100 mb-0">
-                    <input matInput type="text" formControlName="name" placeholder="Cosme Fulanito">
+                      <input matInput type="text" formControlName="name" placeholder="Cosme Fulanito">
 
-                    @if (registerForm.get('name')?.hasError('required')) {
-                    <mat-error>
-                      Full name is required
-                    </mat-error>
-                    }
+                      @if (registerForm.get('name')?.hasError('required')) {
+                      <mat-error>
+                        Full name is required
+                      </mat-error>
+                      }
                     </mat-form-field>
                   </div>
                 </div>
@@ -37,19 +37,19 @@
                   <div class="d-flex flex-column">
                     <label class="auth-field-label">Email</label>
                     <mat-form-field appearance="outline" class="w-100 mb-0">
-                    <input matInput type="email" formControlName="email" placeholder="example@example.com">
+                      <input matInput type="email" formControlName="email" placeholder="example@example.com">
 
-                    @if (registerForm.get('email')?.hasError('required')) {
-                    <mat-error>
-                      Email is required
-                    </mat-error>
-                    }
+                      @if (registerForm.get('email')?.hasError('required')) {
+                      <mat-error>
+                        Email is required
+                      </mat-error>
+                      }
 
-                    @if (registerForm.get('email')?.hasError('email')) {
-                    <mat-error>
-                      Invalid email format
-                    </mat-error>
-                    }
+                      @if (registerForm.get('email')?.hasError('email')) {
+                      <mat-error>
+                        Invalid email format
+                      </mat-error>
+                      }
                     </mat-form-field>
                   </div>
                 </div>
@@ -57,36 +57,34 @@
                 <div class="col-12 col-md-6">
                   <div class="d-flex flex-column">
                     <label class="auth-field-label">Password</label>
-                    <mat-form-field appearance="outline" class="w-100 mb-0">
-                    <input matInput type="password" formControlName="password" appPasswordStrength
-                      placeholder="Password"
-                      (strengthChange)="onPasswordStrengthChange($event)">
+                    <mat-form-field appearance="outline" class="w-100 mb-0 ">
+                      <input matInput type="password" formControlName="password" appPasswordStrength
+                        placeholder="Password" (strengthChange)="onPasswordStrengthChange($event)"
+                        (focus)="onPasswordFocus()" (blur)="onPasswordBlur()">
 
-                    @if (registerForm.get('password')?.hasError('required')) {
-                    <mat-error>
-                      Password is required
-                    </mat-error>
-                    }
+                      @if (registerForm.get('password')?.hasError('required')) {
+                      <mat-error>
+                        Password is required
+                      </mat-error>
+                      }
                     </mat-form-field>
 
-                    <div class="password-strength-container mt-2">
-                      <mat-progress-bar
-                      mode="determinate"
-                      [value]="passwordState.percentage"
-                      [color]="passwordState.strength === 'fuerte' ? 'accent' : (passwordState.strength === 'media' ? 'warn' : 'primary')"
-                      class="mb-2">
-                      </mat-progress-bar>
-
-                      @if (registerForm.get('password')?.value) {
-                      <small class="password-strength-label" [ngClass]="{
-                        'text-danger': passwordState.strength === 'débil',
-                        'text-warning': passwordState.strength === 'media',
-                        'text-success': passwordState.strength === 'fuerte'
-                      }">
-                        {{ passwordState.strength | titlecase }}
-                      </small>
-                      }
+                    @if (showPasswordRequirements && registerForm.get('password')?.value) {
+                    <div class="password-requirements" aria-live="polite">
+                      <div class="password-requirement" [class.password-requirement--met]="passwordState.minLength">
+                        <mat-icon>{{ passwordState.minLength ? 'check' : 'remove' }}</mat-icon>
+                        <span>Mínimo 6 caracteres</span>
+                      </div>
+                      <div class="password-requirement" [class.password-requirement--met]="passwordState.uppercase">
+                        <mat-icon>{{ passwordState.uppercase ? 'check' : 'remove' }}</mat-icon>
+                        <span>Una letra mayúscula</span>
+                      </div>
+                      <div class="password-requirement" [class.password-requirement--met]="passwordState.number">
+                        <mat-icon>{{ passwordState.number ? 'check' : 'remove' }}</mat-icon>
+                        <span>Un número</span>
+                      </div>
                     </div>
+                    }
                   </div>
                 </div>
 
@@ -94,19 +92,19 @@
                   <div class="d-flex flex-column">
                     <label class="auth-field-label">Repeat Password</label>
                     <mat-form-field appearance="outline" class="w-100 mb-0">
-                    <input matInput type="password" formControlName="confirmPassword" placeholder="Repeat Password">
+                      <input matInput type="password" formControlName="confirmPassword" placeholder="Repeat Password">
 
-                    @if (registerForm.get('confirmPassword')?.hasError('required')) {
-                    <mat-error>
-                      Repeat password is required
-                    </mat-error>
-                    }
+                      @if (registerForm.get('confirmPassword')?.hasError('required')) {
+                      <mat-error>
+                        Repeat password is required
+                      </mat-error>
+                      }
 
-                    @if (registerForm.hasError('passwordMismatch') && registerForm.get('confirmPassword')?.touched) {
-                    <mat-error>
-                      Passwords do not match
-                    </mat-error>
-                    }
+                      @if (registerForm.get('confirmPassword')?.hasError('passwordMismatch') && registerForm.get('confirmPassword')?.dirty && registerForm.get('confirmPassword')?.value) {
+                      <mat-error>
+                        Passwords do not match
+                      </mat-error>
+                      }
                     </mat-form-field>
                   </div>
                 </div>
@@ -117,13 +115,13 @@
                   <div class="d-flex flex-column w-100">
                     <label class="auth-field-label">Address</label>
                     <mat-form-field appearance="outline" class="w-100 mb-0">
-                    <input matInput type="text" formControlName="address" placeholder="Apartment, studio or floor">
+                      <input matInput type="text" formControlName="address" placeholder="Apartment, studio or floor">
 
-                    @if (registerForm.get('address')?.hasError('required')) {
-                    <mat-error>
-                      Address is required
-                    </mat-error>
-                    }
+                      @if (registerForm.get('address')?.hasError('required')) {
+                      <mat-error>
+                        Address is required
+                      </mat-error>
+                      }
                     </mat-form-field>
                   </div>
                 </div>
@@ -134,13 +132,13 @@
                   <div class="d-flex flex-column w-100">
                     <label class="auth-field-label">City</label>
                     <mat-form-field appearance="outline" class="w-100 mb-0">
-                    <input matInput type="text" formControlName="city" placeholder="Cordoba">
+                      <input matInput type="text" formControlName="city" placeholder="Cordoba">
 
-                    @if (registerForm.get('city')?.hasError('required')) {
-                    <mat-error>
-                      City is required
-                    </mat-error>
-                    }
+                      @if (registerForm.get('city')?.hasError('required')) {
+                      <mat-error>
+                        City is required
+                      </mat-error>
+                      }
                     </mat-form-field>
                   </div>
                 </div>
@@ -149,17 +147,17 @@
                   <div class="d-flex flex-column w-100">
                     <label class="auth-field-label">State</label>
                     <mat-form-field appearance="outline" class="w-100 mb-0">
-                    <mat-select formControlName="state" placeholder="Argentina">
-                      @for (state of stateOptions; track state) {
-                      <mat-option [value]="state">{{ state }}</mat-option>
-                      }
-                    </mat-select>
+                      <mat-select formControlName="state" placeholder="Argentina">
+                        @for (state of stateOptions; track state) {
+                        <mat-option [value]="state">{{ state }}</mat-option>
+                        }
+                      </mat-select>
 
-                    @if (registerForm.get('state')?.hasError('required')) {
-                    <mat-error>
-                      State is required
-                    </mat-error>
-                    }
+                      @if (registerForm.get('state')?.hasError('required')) {
+                      <mat-error>
+                        State is required
+                      </mat-error>
+                      }
                     </mat-form-field>
                   </div>
                 </div>
@@ -168,19 +166,19 @@
                   <div class="d-flex flex-column w-100 align-items-start align-items-md-end">
                     <label class="auth-field-label">Zip</label>
                     <mat-form-field appearance="outline" class="w-100 mb-0 register-field--zip">
-                    <input matInput type="text" formControlName="zip" placeholder="5000">
+                      <input matInput type="text" formControlName="zip" placeholder="5000">
 
-                    @if (registerForm.get('zip')?.hasError('required')) {
-                    <mat-error>
-                      Zip is required
-                    </mat-error>
-                    }
+                      @if (registerForm.get('zip')?.hasError('required')) {
+                      <mat-error>
+                        Zip is required
+                      </mat-error>
+                      }
 
-                    @if (registerForm.get('zip')?.hasError('pattern')) {
-                    <mat-error>
-                      Invalid zip format
-                    </mat-error>
-                    }
+                      @if (registerForm.get('zip')?.hasError('pattern')) {
+                      <mat-error>
+                        Invalid zip format
+                      </mat-error>
+                      }
                     </mat-form-field>
                   </div>
                 </div>

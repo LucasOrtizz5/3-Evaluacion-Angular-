@@ -1,10 +1,10 @@
 import {Component, inject, OnInit, signal, computed} from '@angular/core';
-import { BreadcrumbComponent } from '../../../shared/breadcrumb/breadcrumb';
+import { BreadcrumbComponent } from '../../../../shared/breadcrumb/breadcrumb';
 import { ActivatedRoute } from '@angular/router';
-import { CharactersService } from '../services/characters.service';
-import { Character } from '../interfaces/character.interface';
-import { TranslatePipe } from '../../../shared/pipes/translate-pipe';
-import { StatusColorPipe } from '../../../shared/pipes/status-color-pipe';
+import { CharactersService } from '../../services/characters.service';
+import { Character } from '../../interfaces/character.interface';
+import { TranslatePipe } from '../../../../shared/pipes/translate-pipe';
+import { StatusColorPipe } from '../../../../shared/pipes/status-color-pipe';
 import { NgClass } from '@angular/common';
 
 interface Episode {
@@ -14,13 +14,13 @@ interface Episode {
 }
 
 @Component({
-  selector: 'app-character-detail',
+  selector: 'app-character-detail-page',
   standalone: true,
   imports: [BreadcrumbComponent, TranslatePipe, StatusColorPipe, NgClass],
-  templateUrl: './character-detail.html',
-  styleUrl: './character-detail.css',
+  templateUrl: './character-detail-page.html',
+  styleUrl: './character-detail-page.css',
 })
-export class CharacterDetail implements OnInit {
+export class CharacterDetailPage implements OnInit {
 
   private route = inject(ActivatedRoute);
   private charactersService = inject(CharactersService);

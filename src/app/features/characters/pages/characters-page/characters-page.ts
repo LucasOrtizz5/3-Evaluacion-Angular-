@@ -1,9 +1,9 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
-import { CharactersService } from '../services/characters.service';
-import { Character} from '../interfaces/character.interface';
+import { CharactersService } from '../../services/characters.service';
+import { Character} from '../../interfaces/character.interface';
 import { computed } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { BreadcrumbComponent } from '../../../shared/breadcrumb/breadcrumb';
+import { BreadcrumbComponent } from '../../../../shared/breadcrumb/breadcrumb';
 
 @Component({
   selector: 'app-characters-page',
