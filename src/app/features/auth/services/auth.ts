@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, computed, signal } from '@angular/core';
 import { User } from '../interfaces/user';
 
 @Injectable({
@@ -8,11 +8,16 @@ export class AuthService {
 
   private readonly STORAGE_KEY = 'currentUser';
   private readonly USERS_KEY = 'registeredUsers';
+  private readonly currentUserState = signal<User | null>(this.readStoredUser());
+
+  readonly currentUser = computed(() => this.currentUserState());
+  readonly authenticated = computed(() => !!this.currentUserState());
 
   // Registro de un nuevo usuario, guardando su información en localStorage
   register(user: User): void {
     // Se utiliza stringify para convertir el objeto user en un string antes de guardarlo en localStorage, ya que localStorage solo puede almacenar strings.
     localStorage.setItem(this.STORAGE_KEY, JSON.stringify(user));
+    this.currentUserState.set(user);
 
     // Guardar en lista de usuarios registrados para login
     const registeredUsers = this.getAllRegisteredUsers();
@@ -29,6 +34,7 @@ export class AuthService {
     if (user) {
       // Si el usuario existe y las credenciales son correctas, lo establece como usuario actual
       localStorage.setItem(this.STORAGE_KEY, JSON.stringify(user));
+      this.currentUserState.set(user);
       return { success: true, message: 'Sesión iniciada correctamente' };
     }
 
@@ -46,22 +52,25 @@ export class AuthService {
   }
 
   getCurrentUser(): User | null {
-    const data = localStorage.getItem(this.STORAGE_KEY);
-    //Se obtiene el item y convierte el string en un objeto User. Si no hay datos, devuelve null.
-    return data ? JSON.parse(data) : null;
+    return this.currentUserState();
   }
 
   //Metodo para saber si el usuario esta logueado, verificando si hay un usuario almacenado en localStorage.
   isAuthenticated(): boolean {
-    return !!localStorage.getItem(this.STORAGE_KEY);
+    return this.authenticated();
   }
 
   getUser(): User | null {
-    const user = localStorage.getItem(this.STORAGE_KEY);
-    return user ? JSON.parse(user) : null;
+    return this.currentUserState();
   }
 
   logout(): void {
     localStorage.removeItem(this.STORAGE_KEY);
+    this.currentUserState.set(null);
+  }
+
+  private readStoredUser(): User | null {
+    const data = localStorage.getItem(this.STORAGE_KEY);
+    return data ? JSON.parse(data) : null;
   }
 }

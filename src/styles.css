@@ -6,14 +6,10 @@
 
 /* CSS Variables */
 :root {
-  --bg-gradient-1: #0f0c29;
-  --bg-gradient-2: rgba(81, 110, 168, 1);
-  --bg-gradient-3: #302b63;
-  --card-bg: #302b63;
-  --card-border: var(--bs-primary);
-  --label-color: rgba(255, 255, 255, 0.7);
+  --bg-dark-gray: #333333;
+  --bg-dark-grey-2: rgba(0, 0, 0, 0.9);
+  --label-color: rgba(255, 255, 255, 0.295);
   --backdrop-blur: 18px;
-  --border-radius: 1.75rem;
 }
 
 /* Background */
@@ -22,7 +18,28 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, var(--bg-gradient-1), var(--bg-gradient-2), var(--bg-gradient-3)) !important;
+  background: var(--bg-dark-gray);
+}
+
+.auth-shell {
+  width: 100%;
+}
+
+.auth-layout {
+  min-height: calc(100vh - 120px);
+}
+
+.auth-layout--center {
+  align-items: center;
+}
+
+.auth-panel-col {
+  display: flex;
+  justify-content: center;
+}
+
+.auth-visual-col {
+  min-height: 0;
 }
 
 /* Auth Card Base */
@@ -30,17 +47,43 @@
   width: 100%;
   max-width: 28rem;
   margin-inline: auto;
-
-  background: var(--card-bg) !important;
+  background: var(--bg-dark-grey-2) !important;
   backdrop-filter: blur(var(--backdrop-blur)) !important;
   -webkit-backdrop-filter: blur(var(--backdrop-blur)) !important;
-
-  border-radius: var(--border-radius) !important;
-  border: 1px solid var(--card-border) !important;
 
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35) !important;
 
   color: white !important;
+}
+
+.auth-card--compact {
+  max-width: 26rem;
+}
+
+.auth-card--wide {
+  max-width: 76rem;
+}
+
+.auth-field-group {
+  max-width: 19.75rem;
+  margin-inline: auto;
+}
+
+.auth-card-title {
+  color: var(--label-color);
+  font-size: 2rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.auth-divider {
+  opacity: 0.25;
+}
+
+.auth-field-label {
+  display: block;
+  margin-bottom: 0.25rem;
+  color: var(--bs-primary);
 }
 
 /* Labels */
@@ -48,9 +91,36 @@
   color: var(--label-color) !important;
 }
 
+.auth-card .mat-mdc-checkbox .mdc-label {
+  color: var(--label-color) !important;
+}
+
+.auth-card .mat-mdc-select-value,
+.auth-card .mat-mdc-select-arrow,
+.auth-card .mat-mdc-select-placeholder {
+  color: white !important;
+}
+
+/* Angular Material outline input wrapper */
+.auth-card .mat-mdc-form-field .mat-mdc-text-field-wrapper {
+  background-color: var(--bg-dark-gray) !important;
+}
+
 /* Input Text */
 .auth-card input {
+  background-color: transparent !important;
   color: white !important;
+}
+
+.auth-card input:-webkit-autofill,
+.auth-card input:-webkit-autofill:hover,
+.auth-card input:-webkit-autofill:focus,
+.auth-card input:-webkit-autofill:active {
+  -webkit-text-fill-color: white !important;
+  caret-color: white !important;
+  box-shadow: 0 0 0 1000px var(--bg-dark-gray) inset !important;
+  -webkit-box-shadow: 0 0 0 1000px var(--bg-dark-gray) inset !important;
+  transition: background-color 9999s ease-out 0s;
 }
 
 /* Form Alert */
@@ -67,7 +137,7 @@
 
 /* Auth Link */
 .auth-link {
-  color: #7dd3fc;
+  color: var(--bs-primary);
   text-decoration: none;
   font-weight: 500;
   cursor: pointer;
@@ -75,6 +145,63 @@
 }
 
 .auth-link:hover {
-  color: #38bdf8;
+  color: var(--bs-primary);
   text-decoration: underline;
+}
+
+.auth-password-requirements {
+  display: grid;
+  gap: 0.375rem;
+}
+
+.auth-password-requirement {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #6b7280;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+.auth-password-requirement mat-icon {
+  width: 1rem;
+  height: 1rem;
+  font-size: 1rem;
+  color: #9ca3af;
+}
+
+.auth-password-requirement--met {
+  color: #2e7d32;
+}
+
+.auth-password-requirement--met mat-icon {
+  color: #2e7d32;
+}
+
+/* Shared UI Helpers */
+.app-navbar-surface {
+  border-bottom: 1px solid var(--bs-primary);
+  background-color: var(--bg-dark-grey-2);
+}
+
+.img-cover-card {
+  object-fit: cover;
+}
+
+.img-cover-card--sm {
+  height: 150px;
+}
+
+.img-cover-square {
+  aspect-ratio: 1 / 1;
+}
+
+@media (max-width: 767.98px) {
+  .background {
+    align-items: flex-start;
+  }
+
+  .auth-layout {
+    min-height: auto;
+  }
 }

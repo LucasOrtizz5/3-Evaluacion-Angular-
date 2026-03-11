@@ -1,0 +1,11 @@
+/* Limita el ancho de la barra de búsqueda */
+.search-bar-custom {
+  max-width: 350px;
+  width: 100%;
+}
+
+.search-input-custom::placeholder {
+  min-width: 0;
+  color: #6c757d;
+  opacity: 1;
+}

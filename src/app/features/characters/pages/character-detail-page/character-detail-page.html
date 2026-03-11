@@ -1,0 +1,83 @@
+<div class="container-xl mt-3">
+
+  <div class="mb-3">
+    <app-breadcrumb [items]="[
+      { label: 'Home', url: '/' },
+      { label: 'Characters', url: '/characters' },
+      { label: character()?.name || '' }
+    ]"></app-breadcrumb>
+  </div>
+
+  <div class="character-detail-container mb-5">
+    @if (character()) {
+    <div class="row g-4 align-items-stretch">
+      <div class="col-12 col-md-4 d-flex mt-3">
+        <div class="card bg-black bg-opacity-50 text-secondary mt-3 w-100 p-4 pb-0 h-100">
+          <img [src]="character()!.image" [alt]="character()!.name" class="img-fluid w-100 rounded-3 img-cover-card img-cover-square">
+          <div class="card bg-transparent text-secondary border-secondary mb-2 mt-3">
+            <div class="card-header fw-bold border-secondary fs-5">
+              Character Info
+            </div>
+            <div class="card-body">
+              <p class="mb-1">
+                <span>Name:</span> {{ character()!.name }}
+              </p>
+              <p class="mb-1">
+                <span>Status:</span>
+                <span [ngClass]="character()!.status | statusColor">
+                  {{ character()!.status | translate:'status' }}
+                </span>
+              </p>
+              <p class="mb-1">
+                <span>Species:</span> {{ character()!.species }}
+              </p>
+              <p class="mb-1">
+                <span>Gender:</span> {{ character()!.gender | translate:'gender' }}
+              </p>
+              <p class="mb-1">
+                <span>Origin:</span> {{ character()!.origin.name }}
+              </p>
+              <p class="mb-0">
+                <span>Location:</span> {{ character()!.location.name }}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 col-md-8 d-flex mt-3">
+        <div class="card bg-black bg-opacity-50 text-secondary mt-3 w-100 d-flex flex-column h-100">
+
+          <div class="card border-secondary m-4 d-flex flex-column bg-transparent text-secondary h-100">
+
+            <div class="card-header fw-bold border-secondary fs-5">
+              List of Episodes appearances
+            </div>
+            <div #episodesContainer class="card-body p-3 d-flex flex-column grow">
+
+              <div class="grow overflow-auto">
+                @for (ep of visibleEpisodes(); track ep.id) {
+                <div class="episode-item text-primary small mb-1">
+                  Episode {{ ep.id }} - {{ ep.name }}
+                </div>
+                }
+              </div>
+
+              @if (hasMoreEpisodes()) {
+              <div>
+                <button class="btn btn-link text-primary p-0 small" (click)="showMoreEpisodes()">
+                  (more)
+                </button>
+              </div>
+              }
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+    }
+  </div>
+</div>

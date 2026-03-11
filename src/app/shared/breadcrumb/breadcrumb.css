@@ -1,0 +1,14 @@
+.breadcrumb-nav {
+  font-size: 1rem;
+  margin-bottom: 1rem;
+}
+.breadcrumb-link {
+  color: #0dcaf0;
+  text-decoration: none;
+}
+.breadcrumb-link:hover {
+  text-decoration: underline;
+}
+.breadcrumb-current {
+  color: #aaa;
+}

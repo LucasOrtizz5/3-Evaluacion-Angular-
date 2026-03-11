@@ -10,11 +10,12 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 @Component({
   selector: 'app-login-page',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, MatFormFieldModule, MatInputModule, MatButtonModule, MatCardModule, MatSnackBarModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, MatFormFieldModule, MatInputModule, MatButtonModule, MatCardModule, MatSnackBarModule, MatCheckboxModule],
   templateUrl: './login-page.html',
   styleUrl: './login-page.css'
 })
@@ -33,8 +34,12 @@ export class LoginPage implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6)]]
+      password: ['', [Validators.required, Validators.minLength(6)]],
+      rememberMe: [false]
     });
+
+    // Cargar datos guardados si existen
+    this.loadSavedCredentials();
 
     // El cartel de alerta desaparece cuando el formulario es válido
     this.subscriptions.push(
@@ -52,27 +57,58 @@ export class LoginPage implements OnInit, OnDestroy {
       this.loginForm.markAllAsTouched();
 
       this.snackBar.open('Completá correctamente el formulario', 'Cerrar', {
-        duration: 3000
+        duration: 3000,
+        verticalPosition: 'top'
       });
       return;
     }
 
     this.formError = false;
 
+    // Guardar credenciales si remember me está marcado
+    if (this.loginForm.value.rememberMe) {
+      this.saveCredentials(this.loginForm.value.email, this.loginForm.value.password);
+    } else {
+      this.clearSavedCredentials();
+    }
+
     // Validar credenciales contra localStorage
     const loginResult = this.authService.login(this.loginForm.value.email, this.loginForm.value.password);
 
     if (loginResult.success) {
       this.snackBar.open('¡Bienvenido de vuelta! 🎉', 'Cerrar', {
-        duration: 3000
+        duration: 3000,
+        verticalPosition: 'top'
       });
-      this.router.navigate(['/auth/profile']);
+      this.router.navigate(['/characters']);
     } else {
       this.formError = true;
       this.snackBar.open(loginResult.message, 'Cerrar', {
-        duration: 3000
+        duration: 3000,
+        verticalPosition: 'top'
       });
     }
+  }
+
+  private saveCredentials(email: string, password: string): void {
+    const credentials = { email, password };
+    localStorage.setItem('rememberMeCredentials', JSON.stringify(credentials));
+  }
+
+  private loadSavedCredentials(): void {
+    const saved = localStorage.getItem('rememberMeCredentials');
+    if (saved) {
+      const credentials = JSON.parse(saved);
+      this.loginForm.patchValue({
+        email: credentials.email,
+        password: credentials.password,
+        rememberMe: true
+      });
+    }
+  }
+
+  private clearSavedCredentials(): void {
+    localStorage.removeItem('rememberMeCredentials');
   }
 
   ngOnDestroy(): void {

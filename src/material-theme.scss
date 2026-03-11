@@ -6,6 +6,18 @@
 // custom components at https://material.angular.dev/guide/theming
 @use '@angular/material' as mat;
 
+$login-m2-primary: mat.m2-define-palette(mat.$m2-blue-palette);
+$login-m2-accent: mat.m2-define-palette(mat.$m2-blue-palette);
+$login-m2-warn: mat.m2-define-palette(mat.$m2-red-palette);
+
+$login-m2-theme: mat.m2-define-light-theme((
+  color: (
+    primary: $login-m2-primary,
+    accent: $login-m2-accent,
+    warn: $login-m2-warn,
+  ),
+));
+
 html {
   height: 100%;
   @include mat.theme((
@@ -34,4 +46,8 @@ body {
   // Reset the user agent margin.
   margin: 0;
   height: 100%;
+}
+
+.m2-login-button-theme {
+  @include mat.button-theme($login-m2-theme);
 }

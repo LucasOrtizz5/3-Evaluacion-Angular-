@@ -1,1 +1,16 @@
 /* Login page - usando estilos compartidos de styles.css */
+
+.login-hero-image {
+  max-height: 64vh;
+  object-fit: contain;
+}
+
+@media (max-width: 767.98px) {
+  .background {
+    align-items: center !important;
+  }
+
+  .login-hero-image {
+    max-height: none;
+  }
+}

@@ -1,16 +1,16 @@
 <div class="background">
 
-  <div class="container-fluid px-2 px-md-4">
+  <div class="container auth-shell px-2 px-md-3 py-2 py-lg-3">
 
-    <div class="row justify-content-center">
+    <div class="row justify-content-center g-3 g-lg-4 auth-layout auth-layout--center login-layout">
 
-      <div class="col-12">
+      <div class="col-lg-6 d-none d-md-flex justify-content-center align-items-center auth-visual-col login-hero-col">
+        <img src="/ram_login.png" alt="Rick and Morty" class="img-fluid login-hero-image">
+      </div>
 
-        <mat-card class="auth-card p-3 p-md-4">
+      <div class="col-12 col-md-8 col-lg-4 auth-panel-col justify-content-lg-start">
 
-          <mat-card-header class="text-center mb-4">
-            <mat-card-title>Iniciar Sesión</mat-card-title>
-          </mat-card-header>
+        <mat-card class="auth-card auth-card--compact p-2">
 
           <mat-card-content>
 
@@ -19,71 +19,81 @@
               <div class="row g-3">
 
                 <!-- Email -->
-                <div class="col-12">
+                <div class="col-12 auth-field-group">
+                  <label class="auth-field-label mb-2">Email address</label>
                   <mat-form-field appearance="outline" class="w-100 mb-0">
-                    <mat-label>Email</mat-label>
-                    <input matInput type="email" formControlName="email">
+                    <input matInput type="email" formControlName="email" placeholder="email@example.com">
 
                     @if (loginForm.get('email')?.hasError('required')) {
                     <mat-error>
-                      El email es obligatorio
+                      Email is required
                     </mat-error>
                     }
 
                     @if (loginForm.get('email')?.hasError('email')) {
                     <mat-error>
-                      El formato del email no es válido
+                      Invalid email format
                     </mat-error>
                     }
                   </mat-form-field>
                 </div>
 
                 <!-- Password -->
-                <div class="col-12">
+                <div class="col-12 auth-field-group">
+                  <label class="auth-field-label">Password</label>
                   <mat-form-field appearance="outline" class="w-100 mb-0">
-                    <mat-label>Contraseña</mat-label>
-                    <input matInput type="password" formControlName="password">
+                    <input matInput type="password" formControlName="password" placeholder="Password">
 
                     @if (loginForm.get('password')?.hasError('required')) {
                     <mat-error>
-                      La contraseña es obligatoria
+                      Password is required
                     </mat-error>
                     }
 
                     @if (loginForm.get('password')?.hasError('minlength')) {
                     <mat-error>
-                      La contraseña debe tener mínimo 6 caracteres
+                      Password must be at least 6 characters
                     </mat-error>
                     }
                   </mat-form-field>
                 </div>
 
+                <!-- Remember me -->
+                <div class="col-12 mt-0">
+                  <mat-checkbox color="primary" formControlName="rememberMe">Remember me</mat-checkbox>
+                </div>
+
                 <!-- Botón -->
-                <div class="col-12 d-flex justify-content-center mt-4">
-
-                  <button mat-raised-button color="primary" type="submit" class="px-5 py-2"
-                    [disabled]="loginForm.invalid">
-                    Iniciar Sesión
-                  </button>
-
+                <div class="col-12 d-flex justify-content-start">
+                  <div class="m2-login-button-theme">
+                    <button mat-raised-button color="primary" type="submit">
+                      Sign In
+                    </button>
+                  </div>
                 </div>
 
                 <!-- Error -->
                 @if (formError) {
                 <div class="col-12">
-
                   <div class="form-alert">
-                    Email o contraseña incorrectos.
+                    Email or password incorrect.
                   </div>
-
                 </div>
                 }
 
-                <!-- Link a Registro -->
-                <div class="col-12 text-center">
-                  <p class="mb-0">
-                    ¿No sos usuario? <a routerLink="/auth/register" class="auth-link">Regístrate aquí</a>
-                  </p>
+                <!-- Divisor -->
+                <div class="col-12 mt-1">
+                  <hr class="auth-divider">
+                </div>
+
+                <!-- Links -->
+                <div class="col-12 d-flex flex-column align-items-start gap-2 mt-1">
+                  <a routerLink="/auth/register" class="auth-link">
+                    New around here? Sign up
+                  </a>
+                  <a class="auth-link">
+                    Forgot password?
+                  </a>
                 </div>
               </div>
             </form>

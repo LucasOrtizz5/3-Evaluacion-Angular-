@@ -6,9 +6,9 @@ export const authGuard: CanActivateFn = () => {
   const authService = inject(AuthService);
   const router = inject(Router);
 
-  // Si el usuario no está autenticado, redirige al registro y bloquea el acceso a la ruta de perfil.
+  // Si el usuario no está autenticado, redirige al login y bloquea el acceso a rutas protegidas.
   if (!authService.isAuthenticated()) {
-    router.navigate(['/auth/register']);
+    router.navigate(['/auth/login']);
     return false;
   }
 

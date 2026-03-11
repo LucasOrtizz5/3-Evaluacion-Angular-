@@ -1,0 +1,12 @@
+<nav class="bg-black bg-opacity-50 p-2 rounded breadcrumb-nav">
+  @for (item of visibleItems; track item; let last = $last) {
+    @if (item.url && !last) {
+      <a [routerLink]="item.url" class="text-decoration-none breadcrumb-link">{{ item.label }}</a>
+    } @else {
+      <span class="text-secondary breadcrumb-current">{{ item.label }}</span>
+    }
+    @if (!last) {
+      <span class="mx-2 text-secondary">/</span>
+    }
+  }
+</nav>
