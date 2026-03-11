@@ -19,6 +19,7 @@ export class MainLayout {
   readonly charactersCount = signal(0);
   readonly user = this.authService.currentUser;
   readonly isAuthenticated = this.authService.authenticated;
+  readonly isNavbarOpen = signal(false);
 
   constructor() {
     effect(() => {
@@ -45,10 +46,20 @@ export class MainLayout {
 
   logout(): void {
     this.authService.logout();
+    this.closeNavbar();
     this.router.navigate(['/auth/login']);
   }
 
   goToProfile(): void {
+    this.closeNavbar();
     this.router.navigate(['/auth/profile']);
+  }
+
+  toggleNavbar(): void {
+    this.isNavbarOpen.update(value => !value);
+  }
+
+  closeNavbar(): void {
+    this.isNavbarOpen.set(false);
   }
 }

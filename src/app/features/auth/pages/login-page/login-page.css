@@ -5,20 +5,11 @@
   object-fit: contain;
 }
 
-a.auth-link {
-  cursor: pointer;
-  transition: opacity 0.2s;
-}
-
-a.auth-link:hover {
-  opacity: 0.7;
-}
-
-.login-layout hr {
-  opacity: 0.25;
-}
-
 @media (max-width: 767.98px) {
+  .background {
+    align-items: center !important;
+  }
+
   .login-hero-image {
     max-height: none;
   }

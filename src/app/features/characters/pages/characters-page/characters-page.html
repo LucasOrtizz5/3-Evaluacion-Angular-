@@ -10,7 +10,7 @@
     <div class="input-group search-bar-custom">
       <input type="text" class="form-control text-light bg-black bg-opacity-50 border-secondary border-0 search-input-custom" placeholder="Search..." #searchInput
         (keyup.enter)="onSearch(searchInput.value)">
-      <button class="btn btn-outline-primary ms-2 search-btn-custom" type="button" (click)="onSearch(searchInput.value)">
+      <button class="btn btn-outline-primary ms-2" type="button" (click)="onSearch(searchInput.value)">
         Search
       </button>
     </div>
@@ -36,7 +36,7 @@
       <div class="col">
         <a [routerLink]="['/characters', character.id]" class="text-decoration-none">
           <div class="card bg-dark text-light border-0 h-100">
-            <img [src]="character.image" class="card-img-top img-fluid w-100 rounded-3" [alt]="character.name" style="object-fit: cover; height: 150px;">
+            <img [src]="character.image" class="card-img-top img-fluid w-100 rounded-3 img-cover-card img-cover-card--sm" [alt]="character.name">
             <div class="card-body">
               <h5 class="card-title">
                 {{ character.name }}

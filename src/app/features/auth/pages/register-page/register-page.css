@@ -1,44 +1,9 @@
 /* Register page - usando estilos compartidos de styles.css */
 
 .register-field--zip {
-  width: min(100%, 8rem) !important;
+  width: 100% !important;
 }
 
 .register-card mat-card-content {
   padding-bottom: 0;
-}
-
-.password-requirements {
-  display: grid;
-  gap: 0.375rem;
-}
-
-.password-requirement {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  color: #6b7280;
-  font-size: 0.875rem;
-  line-height: 1.25rem;
-}
-
-.password-requirement mat-icon {
-  width: 1rem;
-  height: 1rem;
-  font-size: 1rem;
-  color: #9ca3af;
-}
-
-.password-requirement--met {
-  color: #2e7d32;
-}
-
-.password-requirement--met mat-icon {
-  color: #2e7d32;
-}
-
-@media (max-width: 767.98px) {
-  .register-field--zip {
-    width: 100% !important;
-  }
 }

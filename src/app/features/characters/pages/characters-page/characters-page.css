@@ -1,15 +1,11 @@
 /* Limita el ancho de la barra de búsqueda */
 .search-bar-custom {
-	max-width: 350px;
-	width: 100%;
+  max-width: 350px;
+  width: 100%;
 }
 
-.form-control::placeholder {
-	min-width: 0;
-		color: #6c757d;
-		opacity: 1;
-}
-
-.search-btn-custom {
-	margin-left: 8px !important;
+.search-input-custom::placeholder {
+  min-width: 0;
+  color: #6c757d;
+  opacity: 1;
 }

@@ -70,16 +70,16 @@
                     </mat-form-field>
 
                     @if (showPasswordRequirements && registerForm.get('password')?.value) {
-                    <div class="password-requirements" aria-live="polite">
-                      <div class="password-requirement" [class.password-requirement--met]="passwordState.minLength">
+                    <div class="auth-password-requirements" aria-live="polite">
+                      <div class="auth-password-requirement" [class.auth-password-requirement--met]="passwordState.minLength">
                         <mat-icon>{{ passwordState.minLength ? 'check' : 'remove' }}</mat-icon>
                         <span>Mínimo 6 caracteres</span>
                       </div>
-                      <div class="password-requirement" [class.password-requirement--met]="passwordState.uppercase">
+                      <div class="auth-password-requirement" [class.auth-password-requirement--met]="passwordState.uppercase">
                         <mat-icon>{{ passwordState.uppercase ? 'check' : 'remove' }}</mat-icon>
                         <span>Una letra mayúscula</span>
                       </div>
-                      <div class="password-requirement" [class.password-requirement--met]="passwordState.number">
+                      <div class="auth-password-requirement" [class.auth-password-requirement--met]="passwordState.number">
                         <mat-icon>{{ passwordState.number ? 'check' : 'remove' }}</mat-icon>
                         <span>Un número</span>
                       </div>
@@ -163,7 +163,7 @@
                 </div>
 
                 <div class="col-12 col-md-2">
-                  <div class="d-flex flex-column w-100 align-items-start align-items-md-end">
+                  <div class="d-flex flex-column w-100">
                     <label class="auth-field-label">Zip</label>
                     <mat-form-field appearance="outline" class="w-100 mb-0 register-field--zip">
                       <input matInput type="text" formControlName="zip" placeholder="5000">

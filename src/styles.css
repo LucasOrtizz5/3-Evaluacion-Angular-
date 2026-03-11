@@ -149,6 +149,53 @@
   text-decoration: underline;
 }
 
+.auth-password-requirements {
+  display: grid;
+  gap: 0.375rem;
+}
+
+.auth-password-requirement {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #6b7280;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+.auth-password-requirement mat-icon {
+  width: 1rem;
+  height: 1rem;
+  font-size: 1rem;
+  color: #9ca3af;
+}
+
+.auth-password-requirement--met {
+  color: #2e7d32;
+}
+
+.auth-password-requirement--met mat-icon {
+  color: #2e7d32;
+}
+
+/* Shared UI Helpers */
+.app-navbar-surface {
+  border-bottom: 1px solid var(--bs-primary);
+  background-color: var(--bg-dark-grey-2);
+}
+
+.img-cover-card {
+  object-fit: cover;
+}
+
+.img-cover-card--sm {
+  height: 150px;
+}
+
+.img-cover-square {
+  aspect-ratio: 1 / 1;
+}
+
 @media (max-width: 767.98px) {
   .background {
     align-items: flex-start;
