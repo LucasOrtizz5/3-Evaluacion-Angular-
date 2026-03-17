@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "https://rick-morty-api-qp95.onrender.com/:path*"
+    }
+  ]
+}
