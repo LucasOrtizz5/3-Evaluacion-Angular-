@@ -6,6 +6,7 @@ import { Character } from '../../interfaces/character.interface';
 import { TranslatePipe } from '../../../../shared/pipes/translate-pipe';
 import { StatusColorPipe } from '../../../../shared/pipes/status-color-pipe';
 import { NgClass } from '@angular/common';
+import { LoaderComponent } from '../../../../shared/loader/loader';
 
 interface Episode {
   id: number;
@@ -16,7 +17,7 @@ interface Episode {
 @Component({
   selector: 'app-character-detail-page',
   standalone: true,
-  imports: [BreadcrumbComponent, TranslatePipe, StatusColorPipe, NgClass],
+  imports: [BreadcrumbComponent, TranslatePipe, StatusColorPipe, NgClass, LoaderComponent],
   templateUrl: './character-detail-page.html',
   styleUrl: './character-detail-page.css',
 })
@@ -47,7 +48,11 @@ export class CharacterDetailPage implements OnInit {
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
-    if (!id) return;
+    if (!id) {
+      this.hasError.set(true);
+      this.isLoading.set(false);
+      return;
+    }
 
     this.charactersService.getCharacterById(+id).subscribe({
       next: (character: Character) => {

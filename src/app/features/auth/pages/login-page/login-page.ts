@@ -1,6 +1,7 @@
 import { Component, inject, OnInit, OnDestroy } from '@angular/core';
 import { AuthService } from '../../services/auth';
 import { Router, RouterLink } from '@angular/router';
+import { RouterLoaderService } from '../../../../shared/services/router-loader.service';
 import { FormBuilder, Validators, ReactiveFormsModule, FormGroup } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs';
@@ -25,6 +26,7 @@ export class LoginPage implements OnInit, OnDestroy {
   private authService = inject(AuthService);
   private router = inject(Router);
   private snackBar = inject(MatSnackBar);
+  private loaderService = inject(RouterLoaderService);
 
   private subscriptions: Subscription[] = [];
 
@@ -66,6 +68,7 @@ export class LoginPage implements OnInit, OnDestroy {
 
     this.formError = false;
     this.isSubmitting = true;
+    this.loaderService.show();
 
     // Guardar solo el email si remember me está marcado.
     if (this.loginForm.value.rememberMe) {
@@ -78,6 +81,7 @@ export class LoginPage implements OnInit, OnDestroy {
       this.authService.login(this.loginForm.value.email, this.loginForm.value.password).subscribe({
         next: () => {
           this.isSubmitting = false;
+          this.loaderService.hide();
           this.snackBar.open('Welcome back!', 'Close', {
             duration: 3000,
             verticalPosition: 'top'
@@ -86,6 +90,7 @@ export class LoginPage implements OnInit, OnDestroy {
         },
         error: (error) => {
           this.isSubmitting = false;
+          this.loaderService.hide();
           this.formError = true;
           this.snackBar.open(this.getErrorMessage(error, 'Invalid email or password'), 'Close', {
             duration: 3000,

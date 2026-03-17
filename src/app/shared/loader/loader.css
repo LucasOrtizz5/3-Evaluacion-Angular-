@@ -1,0 +1,12 @@
+.loader-wrapper {
+  min-height: 180px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.loader-spinner {
+  width: 2.5rem;
+  height: 2.5rem;
+}

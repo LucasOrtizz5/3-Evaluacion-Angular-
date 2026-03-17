@@ -1,10 +1,17 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MainLayout } from './layout/main-layout/main-layout';
+import { GlobalLoaderComponent } from './shared/global-loader/global-loader';
+import { RouterLoaderService } from './shared/services/router-loader.service';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [MainLayout],
-  template: `<app-main-layout></app-main-layout>`
+  imports: [MainLayout, GlobalLoaderComponent],
+  template: `
+    <app-global-loader></app-global-loader>
+    <app-main-layout></app-main-layout>
+  `
 })
-export class App {}
+export class App {
+  private loaderService = inject(RouterLoaderService);
+}

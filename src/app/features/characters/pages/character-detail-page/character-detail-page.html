@@ -9,7 +9,13 @@
   </div>
 
   <div class="character-detail-container mb-5">
-    @if (character()) {
+    @if (isLoading()) {
+      <app-loader message="Cargando detalle del personaje..."></app-loader>
+    } @else if (hasError()) {
+      <div class="alert alert-danger">
+        No se pudo cargar el personaje. Intenta nuevamente en unos segundos.
+      </div>
+    } @else if (character()) {
     <div class="row g-4 align-items-stretch">
       <div class="col-12 col-md-4 d-flex mt-3">
         <div class="card bg-black bg-opacity-50 text-secondary mt-3 w-100 p-4 pb-0 h-100">

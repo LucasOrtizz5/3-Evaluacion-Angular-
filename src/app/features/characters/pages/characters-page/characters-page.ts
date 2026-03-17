@@ -4,11 +4,12 @@ import { Character} from '../../interfaces/character.interface';
 import { computed } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { BreadcrumbComponent } from '../../../../shared/breadcrumb/breadcrumb';
+import { LoaderComponent } from '../../../../shared/loader/loader';
 
 @Component({
   selector: 'app-characters-page',
   standalone: true,
-  imports: [RouterLink, BreadcrumbComponent],
+  imports: [RouterLink, BreadcrumbComponent, LoaderComponent],
   templateUrl: './characters-page.html',
   styleUrl: './characters-page.css',
 })

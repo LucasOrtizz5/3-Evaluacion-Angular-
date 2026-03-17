@@ -2,6 +2,7 @@ import { Component, effect, inject, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth';
 import { Router } from '@angular/router';
+import { RouterLoaderService } from '../../../../shared/services/router-loader.service';
 import { FormBuilder, Validators, ReactiveFormsModule, FormGroup } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -24,6 +25,7 @@ export class ProfilePage implements OnInit, OnDestroy {
   private authService = inject(AuthService);
   private router = inject(Router);
   private snackBar = inject(MatSnackBar);
+  private loaderService = inject(RouterLoaderService);
 
   private subscriptions: Subscription[] = [];
 
@@ -80,8 +82,10 @@ export class ProfilePage implements OnInit, OnDestroy {
   }
 
   logout(): void {
+    this.loaderService.show();
     this.subscriptions.push(
       this.authService.logout().subscribe(() => {
+        this.loaderService.hide();
         this.router.navigate(['/auth/login']);
       })
     );

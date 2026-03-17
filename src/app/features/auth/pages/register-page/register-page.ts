@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { AuthService } from '../../services/auth';
 import { Router, RouterLink } from '@angular/router';
+import { RouterLoaderService } from '../../../../shared/services/router-loader.service';
 import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { PasswordStrengthDirective, PasswordStrengthState } from '../../directives/password-strength';
@@ -39,6 +40,7 @@ export class RegisterPage implements OnInit, OnDestroy {
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
   private router = inject(Router);
+  private loaderService = inject(RouterLoaderService);
 
   private subscriptions: Subscription[] = [];
 
@@ -104,6 +106,7 @@ export class RegisterPage implements OnInit, OnDestroy {
 
     this.formError = false;
     this.isSubmitting = true;
+    this.loaderService.show();
 
     const { confirmPassword, state, ...formValue } = this.registerForm.getRawValue();
     const payload: RegisterPayload = {
@@ -115,6 +118,7 @@ export class RegisterPage implements OnInit, OnDestroy {
       this.authService.register(payload).subscribe({
         next: () => {
           this.isSubmitting = false;
+          this.loaderService.hide();
           this.snackBar.open('Registration successful. Please sign in.', 'Close', {
             duration: 3000,
             verticalPosition: 'top'
@@ -123,6 +127,7 @@ export class RegisterPage implements OnInit, OnDestroy {
         },
         error: (error) => {
           this.isSubmitting = false;
+          this.loaderService.hide();
           this.formError = true;
           this.snackBar.open(this.getErrorMessage(error, 'Could not complete registration'), 'Close', {
             duration: 3000,

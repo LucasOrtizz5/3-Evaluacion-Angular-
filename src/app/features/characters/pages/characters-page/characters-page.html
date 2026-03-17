@@ -18,10 +18,7 @@
 
   @if (isLoading()) {
 
-  <div class="text-center">
-    <div class="spinner-border text-primary"></div>
-    <p>Cargando personajes...</p>
-  </div>
+  <app-loader message="Cargando personajes..."></app-loader>
 
   } @else if (hasError()) {
 
