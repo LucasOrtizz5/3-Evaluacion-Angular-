@@ -4,7 +4,11 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
+    "start:local": "ng serve --configuration development",
+    "start:remote": "ng serve --configuration remote",
     "build": "ng build",
+    "build:vercel": "ng build --configuration production",
+    "build:remote": "ng build --configuration production-remote",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },

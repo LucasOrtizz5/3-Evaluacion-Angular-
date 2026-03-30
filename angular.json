@@ -51,7 +51,39 @@
               ],
               "outputHashing": "all"
             },
+            "production-remote": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.prod.remote.ts"
+                }
+              ],
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "600kB",
+                  "maximumError": "1MB"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "4kB",
+                  "maximumError": "8kB"
+                }
+              ],
+              "outputHashing": "all"
+            },
             "development": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true
+            },
+            "remote": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.remote.ts"
+                }
+              ],
               "optimization": false,
               "extractLicenses": false,
               "sourceMap": true
@@ -65,8 +97,14 @@
             "production": {
               "buildTarget": "evaluacion-angular-2:build:production"
             },
+            "production-remote": {
+              "buildTarget": "evaluacion-angular-2:build:production-remote"
+            },
             "development": {
               "buildTarget": "evaluacion-angular-2:build:development"
+            },
+            "remote": {
+              "buildTarget": "evaluacion-angular-2:build:remote"
             }
           },
           "defaultConfiguration": "development"
