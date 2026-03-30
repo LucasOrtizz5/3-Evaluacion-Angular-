@@ -6,6 +6,7 @@
     "start": "ng serve",
     "start:local": "ng serve --configuration development",
     "start:remote": "ng serve --configuration remote",
+    "start:remote-proxy": "ng serve --configuration remote-proxy",
     "build": "ng build",
     "build:vercel": "ng build --configuration production",
     "build:remote": "ng build --configuration production-remote",

@@ -1,21 +1,31 @@
-import { Component, effect, inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, computed, effect, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth';
 import { Router } from '@angular/router';
 import { RouterLoaderService } from '../../../../shared/services/router-loader.service';
 import { FormBuilder, Validators, ReactiveFormsModule, FormGroup } from '@angular/forms';
 import { Subscription } from 'rxjs';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { DetailLayoutComponent } from '../../../../shared/detail-layout/detail-layout';
+import { User } from '../../interfaces/user';
+
+interface ProfileDraft {
+  nickname: string;
+  birthDate: string;
+  location: string;
+  profileImageUrl: string;
+}
+
+interface FavoriteEpisodePreview {
+  id: number;
+  name: string;
+}
 
 @Component({
   selector: 'app-profile-page',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatCardModule, MatSnackBarModule],
+  imports: [CommonModule, ReactiveFormsModule, MatSnackBarModule, DetailLayoutComponent],
   templateUrl: './profile-page.html',
   styleUrl: './profile-page.css'
 })
@@ -28,36 +38,112 @@ export class ProfilePage implements OnInit, OnDestroy {
   private loaderService = inject(RouterLoaderService);
 
   private subscriptions: Subscription[] = [];
+  private readonly localStoragePrefix = 'profile-draft:';
+  private readonly maxCharacterAvatarId = 826;
 
   readonly user = this.authService.currentUser;
+  readonly hasProfileError = computed(() => !this.user());
+  readonly draft = signal<ProfileDraft>({
+    nickname: '',
+    birthDate: '',
+    location: '',
+    profileImageUrl: ''
+  });
+
+  readonly favoriteEpisodes = signal<FavoriteEpisodePreview[]>(
+    Array.from({ length: 18 }, (_, index) => ({
+      id: index + 1,
+      name: 'Pending favorite episode'
+    }))
+  );
+
+  readonly episodesPage = signal(1);
+  readonly episodesPerPage = 10;
+
+  readonly visibleEpisodes = computed(() => {
+    const end = this.episodesPage() * this.episodesPerPage;
+    return this.favoriteEpisodes().slice(0, end);
+  });
+
+  readonly hasMoreEpisodes = computed(() => this.visibleEpisodes().length < this.favoriteEpisodes().length);
+
+  readonly profileDisplayName = computed(() => this.user()?.name || 'Sin datos');
+  readonly profileEmail = computed(() => this.user()?.email || 'Sin datos');
+  readonly profileNickname = computed(() => this.draft().nickname || 'Sin datos');
+  readonly profileBirthDate = computed(() => this.draft().birthDate || 'Sin datos');
+  readonly profileLocation = computed(() => this.draft().location || 'Sin datos');
+
+  readonly placeholderAvatarUrl = computed(() => {
+    const userKey = this.user()?.id || this.user()?.email || 'guest-user';
+    const characterId = this.getAvatarCharacterId(userKey);
+    return `https://rickandmortyapi.com/api/character/avatar/${characterId}.jpeg`;
+  });
+
+  readonly failedCustomImageUrl = signal('');
+
+  readonly displayImageUrl = computed(() => {
+    const customImage = this.draft().profileImageUrl.trim();
+    if (customImage && customImage !== this.failedCustomImageUrl()) {
+      return customImage;
+    }
+
+    return this.placeholderAvatarUrl();
+  });
+
   profileForm!: FormGroup;
+  imageForm!: FormGroup;
+
   formError = false;
+  imageError = false;
+  isEditingProfile = false;
+  isEditingImage = false;
 
   constructor() {
     effect(() => {
       const currentUser = this.user();
-      if (!currentUser || !this.profileForm) {
+      if (!currentUser) {
         return;
       }
 
-      this.profileForm.patchValue({
-        name: currentUser.name ?? '',
-        email: currentUser.email ?? ''
-      }, { emitEvent: false });
+      this.hydrateDraft(currentUser);
+
+      if (this.profileForm) {
+        this.profileForm.patchValue({
+          nickname: this.draft().nickname,
+          location: this.draft().location,
+        }, { emitEvent: false });
+      }
+
+      if (this.imageForm) {
+        this.imageForm.patchValue({
+          profileImageUrl: this.draft().profileImageUrl,
+        }, { emitEvent: false });
+      }
     });
   }
 
   ngOnInit(): void {
     this.profileForm = this.fb.group({
-      name: [this.user()?.name || '', Validators.required],
-      email: [this.user()?.email || '', [Validators.required, Validators.email]]
+      nickname: [this.draft().nickname, [Validators.required, Validators.maxLength(25)]],
+      location: [this.draft().location, [Validators.required, Validators.maxLength(80)]],
     });
 
-    // El cartel de alerta desaparece cuando el formulario es válido
+    this.imageForm = this.fb.group({
+      profileImageUrl: [this.draft().profileImageUrl, [Validators.required, Validators.pattern('https?://.+')]],
+    });
+
     this.subscriptions.push(
       this.profileForm.statusChanges.subscribe(status => {
         if (status === 'VALID') {
           this.formError = false;
+        }
+      })
+    );
+
+    this.subscriptions.push(
+      this.imageForm.statusChanges.subscribe(status => {
+        if (status === 'VALID') {
+          this.imageError = false;
         }
       })
     );
@@ -74,11 +160,100 @@ export class ProfilePage implements OnInit, OnDestroy {
       return;
     }
 
-    this.formError = false;
+    const formValue = this.profileForm.getRawValue();
+    this.draft.update(value => ({
+      ...value,
+      nickname: (formValue.nickname || '').trim(),
+      location: (formValue.location || '').trim(),
+    }));
+    this.persistDraft();
 
-    this.snackBar.open('Profile update endpoint is not available yet.', 'Close', {
+    this.formError = false;
+    this.isEditingProfile = false;
+
+    this.snackBar.open('Información personal actualizada localmente.', 'Cerrar', {
       duration: 3000
     });
+  }
+
+  toggleProfileEditor(): void {
+    if (this.isEditingProfile) {
+      this.handleSave();
+      return;
+    }
+
+    this.isEditingProfile = true;
+    this.profileForm.patchValue({
+      nickname: this.draft().nickname,
+      location: this.draft().location,
+    }, { emitEvent: false });
+  }
+
+  cancelProfileEditor(): void {
+    this.isEditingProfile = false;
+    this.formError = false;
+    this.profileForm.patchValue({
+      nickname: this.draft().nickname,
+      location: this.draft().location,
+    }, { emitEvent: false });
+  }
+
+  toggleImageEditor(): void {
+    this.isEditingImage = !this.isEditingImage;
+    this.imageError = false;
+
+    if (this.isEditingImage) {
+      this.imageForm.patchValue({ profileImageUrl: this.draft().profileImageUrl }, { emitEvent: false });
+    }
+  }
+
+  saveImage(): void {
+    if (this.imageForm.invalid) {
+      this.imageError = true;
+      this.imageForm.markAllAsTouched();
+      this.snackBar.open('Ingresá una URL de imagen válida.', 'Cerrar', {
+        duration: 3000
+      });
+      return;
+    }
+
+    const profileImageUrl = (this.imageForm.getRawValue().profileImageUrl || '').trim();
+    this.draft.update(value => ({ ...value, profileImageUrl }));
+    this.persistDraft();
+    this.failedCustomImageUrl.set('');
+
+    this.imageError = false;
+    this.isEditingImage = false;
+
+    this.snackBar.open('Foto de perfil actualizada.', 'Cerrar', {
+      duration: 3000
+    });
+  }
+
+  cancelImageEditor(): void {
+    this.isEditingImage = false;
+    this.imageError = false;
+    this.imageForm.patchValue({ profileImageUrl: this.draft().profileImageUrl }, { emitEvent: false });
+  }
+
+  removeProfilePhoto(): void {
+    this.draft.update(value => ({ ...value, profileImageUrl: '' }));
+    this.persistDraft();
+    this.failedCustomImageUrl.set('');
+    this.imageError = false;
+    this.isEditingImage = false;
+    this.imageForm.patchValue({ profileImageUrl: '' }, { emitEvent: false });
+  }
+
+  onProfileImageError(): void {
+    const customImage = this.draft().profileImageUrl.trim();
+    if (customImage) {
+      this.failedCustomImageUrl.set(customImage);
+    }
+  }
+
+  showMoreEpisodes(): void {
+    this.episodesPage.update(value => value + 1);
   }
 
   logout(): void {
@@ -93,5 +268,57 @@ export class ProfilePage implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.subscriptions.forEach(sub => sub.unsubscribe());
+  }
+
+  private hydrateDraft(user: User): void {
+    const persisted = this.readDraftFromStorage(user);
+    const baseLocation = [user.city, user.country].filter(Boolean).join(', ') || user.address || '';
+
+    this.draft.set({
+      nickname: persisted?.nickname || '',
+      birthDate: persisted?.birthDate || '',
+      location: persisted?.location || baseLocation,
+      profileImageUrl: persisted?.profileImageUrl || '',
+    });
+  }
+
+  private persistDraft(): void {
+    const user = this.user();
+    if (!user) {
+      return;
+    }
+
+    localStorage.setItem(this.getStorageKey(user), JSON.stringify(this.draft()));
+  }
+
+  private readDraftFromStorage(user: User): ProfileDraft | null {
+    const rawValue = localStorage.getItem(this.getStorageKey(user));
+    if (!rawValue) {
+      return null;
+    }
+
+    try {
+      const parsedValue = JSON.parse(rawValue) as Partial<ProfileDraft>;
+      return {
+        nickname: parsedValue.nickname ?? '',
+        birthDate: parsedValue.birthDate ?? '',
+        location: parsedValue.location ?? '',
+        profileImageUrl: parsedValue.profileImageUrl ?? '',
+      };
+    } catch {
+      return null;
+    }
+  }
+
+  private getStorageKey(user: User): string {
+    return `${this.localStoragePrefix}${user.id || user.email}`;
+  }
+
+  private getAvatarCharacterId(seed: string): number {
+    const hash = seed
+      .split('')
+      .reduce((acc, current) => ((acc << 5) - acc + current.charCodeAt(0)) | 0, 0);
+
+    return (Math.abs(hash) % this.maxCharacterAvatarId) + 1;
   }
 }

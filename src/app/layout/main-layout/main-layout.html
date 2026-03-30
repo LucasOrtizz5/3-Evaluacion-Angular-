@@ -70,8 +70,7 @@
         <!-- DERECHA -->
         <div class="d-flex flex-column flex-lg-row">
           @if (isAuthenticated()) {
-            <span class="text-white px-lg-3 py-1">{{ user()?.name }}</span>
-            <span class="text-secondary px-lg-3 py-1 cursor-pointer" (click)="goToProfile()">Profile</span>
+            <span class="text-white px-lg-3 py-1 cursor-pointer" (click)="goToProfile()">{{ user()?.name }}</span>
             <span class="text-secondary px-lg-3 py-1 cursor-pointer" (click)="logout()">Log Out</span>
           }
         </div>

@@ -87,6 +87,17 @@
               "optimization": false,
               "extractLicenses": false,
               "sourceMap": true
+            },
+            "remote-proxy": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.remote.proxy.ts"
+                }
+              ],
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true
             }
           },
           "defaultConfiguration": "production"
@@ -105,6 +116,10 @@
             },
             "remote": {
               "buildTarget": "evaluacion-angular-2:build:remote"
+            },
+            "remote-proxy": {
+              "buildTarget": "evaluacion-angular-2:build:remote-proxy",
+              "proxyConfig": "proxy.render.json"
             }
           },
           "defaultConfiguration": "development"

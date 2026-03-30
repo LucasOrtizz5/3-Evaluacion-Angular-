@@ -1,1 +1,104 @@
-/* Profile page - usando estilos compartidos de styles.css */
+/* Profile page - detail layout customizations */
+
+.profile-avatar-shell {
+	background: radial-gradient(circle at 35% 20%, rgba(13, 202, 240, 0.35), rgba(13, 202, 240, 0.05));
+}
+
+.profile-avatar-image {
+	object-fit: cover;
+	filter: saturate(1.1);
+}
+
+.profile-icon-btn {
+	min-width: 2rem;
+	padding-inline: 0.55rem;
+	font-weight: 700;
+	line-height: 1;
+}
+
+.profile-action-btn {
+	border-color: rgba(13, 202, 240, 0.75);
+	background: rgba(13, 202, 240, 0.15);
+	color: #9be7ff;
+}
+
+.profile-action-btn:hover,
+.profile-action-btn:focus {
+	border-color: rgba(13, 202, 240, 0.95);
+	background: rgba(13, 202, 240, 0.25);
+	color: #d7f6ff;
+}
+
+.profile-image-edit-btn {
+	position: absolute;
+	right: 0.75rem;
+	bottom: 0.75rem;
+	z-index: 2;
+}
+
+.profile-editor-panel {
+	border: 1px solid rgba(255, 255, 255, 0.2);
+	border-radius: 0.75rem;
+	background: rgba(20, 20, 20, 0.75);
+}
+
+.profile-editor-panel--image {
+	position: absolute;
+	left: 0.75rem;
+	right: 0.75rem;
+	bottom: 3.25rem;
+	z-index: 2;
+}
+
+.profile-label {
+	font-size: 0.875rem;
+	color: #9ca3af;
+	margin-bottom: 0.35rem;
+	display: inline-block;
+}
+
+.profile-input {
+	background-color: rgba(0, 0, 0, 0.35);
+	border-color: rgba(255, 255, 255, 0.2);
+	color: #e5e7eb;
+}
+
+.profile-info-row {
+	display: flex;
+	gap: 0.5rem;
+	align-items: center;
+}
+
+.profile-info-label {
+	min-width: 88px;
+	font-weight: 600;
+}
+
+.profile-info-value {
+	flex: 1;
+}
+
+.profile-inline-input {
+	width: 100%;
+	vertical-align: middle;
+}
+
+.profile-input:focus {
+	background-color: rgba(0, 0, 0, 0.45);
+	color: #f3f4f6;
+	border-color: rgba(13, 202, 240, 0.65);
+	box-shadow: 0 0 0 0.2rem rgba(13, 202, 240, 0.2);
+}
+
+.profile-error {
+	font-size: 0.75rem;
+	color: #fca5a5;
+	margin-top: 0.35rem;
+}
+
+@media (max-width: 575.98px) {
+	.profile-editor-panel--image {
+		left: 0.5rem;
+		right: 0.5rem;
+	}
+}

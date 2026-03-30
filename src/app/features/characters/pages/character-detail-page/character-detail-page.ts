@@ -1,12 +1,11 @@
 import {Component, inject, OnInit, signal, computed} from '@angular/core';
-import { BreadcrumbComponent } from '../../../../shared/breadcrumb/breadcrumb';
 import { ActivatedRoute } from '@angular/router';
 import { CharactersService } from '../../services/characters.service';
 import { Character } from '../../interfaces/character.interface';
 import { TranslatePipe } from '../../../../shared/pipes/translate-pipe';
 import { StatusColorPipe } from '../../../../shared/pipes/status-color-pipe';
 import { NgClass } from '@angular/common';
-import { LoaderComponent } from '../../../../shared/loader/loader';
+import { DetailLayoutComponent } from '../../../../shared/detail-layout/detail-layout';
 
 interface Episode {
   id: number;
@@ -17,7 +16,7 @@ interface Episode {
 @Component({
   selector: 'app-character-detail-page',
   standalone: true,
-  imports: [BreadcrumbComponent, TranslatePipe, StatusColorPipe, NgClass, LoaderComponent],
+  imports: [DetailLayoutComponent, TranslatePipe, StatusColorPipe, NgClass],
   templateUrl: './character-detail-page.html',
   styleUrl: './character-detail-page.css',
 })
