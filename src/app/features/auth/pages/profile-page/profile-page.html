@@ -132,13 +132,29 @@
   </div>
 
   <div detail-content class="d-flex flex-column grow">
-    <div class="grow overflow-auto">
-      @for (episode of visibleEpisodes(); track episode.id) {
-        <div class="episode-item text-primary small mb-1">
-          Episode {{ episode.id }} - {{ episode.name }}
-        </div>
-      }
-    </div>
+    @if (favoriteEpisodes().length > 0) {
+      <div class="grow overflow-auto">
+        @for (episode of visibleEpisodes(); track episode.id) {
+          <div class="episode-item d-flex align-items-center justify-content-between gap-2 mb-1">
+            <a [routerLink]="['/episodes', episode.id]" class="text-primary small text-decoration-none">
+              Episode {{ episode.id }} - {{ episode.name }}
+            </a>
+            <button
+              type="button"
+              class="btn btn-sm profile-icon-btn profile-action-btn"
+              (click)="removeFavorite(episode.id)"
+              aria-label="Quitar favorito"
+              title="Quitar de favoritos">
+              ✕
+            </button>
+          </div>
+        }
+      </div>
+    } @else {
+      <div class="grow d-flex align-items-center justify-content-center text-secondary">
+        Todavia no agregaste episodios favoritos.
+      </div>
+    }
 
     @if (hasMoreEpisodes()) {
       <div>

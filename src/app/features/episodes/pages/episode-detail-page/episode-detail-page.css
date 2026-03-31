@@ -1,0 +1,56 @@
+.grow {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.episode-detail-shell {
+  min-height: 520px;
+}
+
+.episode-detail-panels-row {
+  --bs-gutter-y: 1.5rem;
+  --bs-gutter-x: 5rem;
+}
+
+.episode-info-line {
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.episode-info-value {
+  font-weight: 400
+}
+
+.episode-info-line--name,
+.episode-info-value--name {
+  font-size: 1.04rem;
+}
+
+.episode-favorite-btn {
+  border-color: rgba(220, 53, 69, 0.55);
+  background: rgba(220, 53, 69, 0.12);
+  color: #f8d7da;
+}
+
+.episode-favorite-btn:hover,
+.episode-favorite-btn:focus {
+  border-color: rgba(220, 53, 69, 0.85);
+  background: rgba(220, 53, 69, 0.22);
+  color: #fff;
+}
+
+.episode-favorite-btn--active {
+  border-color: rgba(220, 53, 69, 1);
+  background: rgba(220, 53, 69, 0.28);
+  color: #fff;
+}
+
+.episode-character-link {
+  color: var(--bs-primary);
+}
+
+.episode-character-link:hover,
+.episode-character-link:focus {
+  color: #56b4ff;
+  text-decoration: underline !important;
+}

@@ -1,7 +1,7 @@
 import { Component, computed, effect, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { RouterLoaderService } from '../../../../shared/services/router-loader.service';
 import { FormBuilder, Validators, ReactiveFormsModule, FormGroup } from '@angular/forms';
 import { Subscription } from 'rxjs';
@@ -9,6 +9,8 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { DetailLayoutComponent } from '../../../../shared/detail-layout/detail-layout';
 import { User } from '../../interfaces/user';
+import { EpisodeFavoritesService } from '../../../episodes/services/episode-favorites.service';
+import { FavoriteEpisode } from '../../../episodes/interfaces/episode.interface';
 
 interface ProfileDraft {
   nickname: string;
@@ -17,15 +19,10 @@ interface ProfileDraft {
   profileImageUrl: string;
 }
 
-interface FavoriteEpisodePreview {
-  id: number;
-  name: string;
-}
-
 @Component({
   selector: 'app-profile-page',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, MatSnackBarModule, DetailLayoutComponent],
+  imports: [CommonModule, ReactiveFormsModule, MatSnackBarModule, DetailLayoutComponent, RouterLink],
   templateUrl: './profile-page.html',
   styleUrl: './profile-page.css'
 })
@@ -36,6 +33,7 @@ export class ProfilePage implements OnInit, OnDestroy {
   private router = inject(Router);
   private snackBar = inject(MatSnackBar);
   private loaderService = inject(RouterLoaderService);
+  private episodeFavoritesService = inject(EpisodeFavoritesService);
 
   private subscriptions: Subscription[] = [];
   private readonly localStoragePrefix = 'profile-draft:';
@@ -50,11 +48,8 @@ export class ProfilePage implements OnInit, OnDestroy {
     profileImageUrl: ''
   });
 
-  readonly favoriteEpisodes = signal<FavoriteEpisodePreview[]>(
-    Array.from({ length: 18 }, (_, index) => ({
-      id: index + 1,
-      name: 'Pending favorite episode'
-    }))
+  readonly favoriteEpisodes = computed<FavoriteEpisode[]>(() =>
+    this.episodeFavoritesService.favorites()
   );
 
   readonly episodesPage = signal(1);
@@ -254,6 +249,10 @@ export class ProfilePage implements OnInit, OnDestroy {
 
   showMoreEpisodes(): void {
     this.episodesPage.update(value => value + 1);
+  }
+
+  removeFavorite(episodeId: number): void {
+    this.episodeFavoritesService.removeFavorite(episodeId);
   }
 
   logout(): void {

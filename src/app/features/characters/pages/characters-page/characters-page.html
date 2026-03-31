@@ -6,15 +6,10 @@
     ]"></app-breadcrumb>
   </div>
 
-  <div class="mb-4 d-flex justify-content-start">
-    <div class="input-group search-bar-custom">
-      <input type="text" class="form-control text-light bg-black bg-opacity-50 border-secondary border-0 search-input-custom" placeholder="Search..." #searchInput
-        (keyup.enter)="onSearch(searchInput.value)">
-      <button class="btn btn-outline-primary ms-2" type="button" (click)="onSearch(searchInput.value)">
-        Search
-      </button>
-    </div>
-  </div>
+  <app-search-bar
+    placeholder="Search characters..."
+    (search)="onSearch($event)">
+  </app-search-bar>
 
   @if (isLoading()) {
 

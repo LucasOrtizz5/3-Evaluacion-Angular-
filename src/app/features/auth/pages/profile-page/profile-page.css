@@ -96,6 +96,11 @@
 	margin-top: 0.35rem;
 }
 
+.episode-item a:hover,
+.episode-item a:focus {
+	text-decoration: underline !important;
+}
+
 @media (max-width: 575.98px) {
 	.profile-editor-panel--image {
 		left: 0.5rem;

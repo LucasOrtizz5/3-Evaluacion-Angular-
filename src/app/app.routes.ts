@@ -45,8 +45,15 @@ export const routes: Routes = [
     path: 'episodes',
     canActivate: [authGuard],
     loadComponent: () =>
-      import('./features/characters/pages/episodes-page/episodes-page')
+      import('./features/episodes/pages/episodes-page/episodes-page')
         .then(m => m.EpisodesPage)
+  },
+  {
+    path: 'episodes/:id',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/episodes/pages/episode-detail-page/episode-detail-page')
+        .then(m => m.EpisodeDetailPage)
   },
   {
     path: 'locations',

@@ -20,7 +20,7 @@
                 [alt]="mediaAlt"
                 class="img-fluid w-100 rounded-3 img-cover-card img-cover-square"
               >
-            } @else {
+            } @else if (showMedia) {
               <div class="detail-media-slot rounded-3">
                 <ng-content select="[detail-media]"></ng-content>
               </div>

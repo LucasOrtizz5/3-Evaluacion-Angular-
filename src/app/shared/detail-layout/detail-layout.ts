@@ -20,6 +20,7 @@ export class DetailLayoutComponent {
 
   @Input() mediaSrc: string | null = null;
   @Input() mediaAlt = 'Detail image';
+  @Input() showMedia = true;
 
   @Input() infoTitle = 'Detail Info';
   @Input() contentTitle = 'Related Information';

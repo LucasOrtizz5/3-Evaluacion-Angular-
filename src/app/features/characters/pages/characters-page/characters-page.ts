@@ -5,11 +5,12 @@ import { computed } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { BreadcrumbComponent } from '../../../../shared/breadcrumb/breadcrumb';
 import { LoaderComponent } from '../../../../shared/loader/loader';
+import { SearchBarComponent } from '../../../../shared/search-bar/search-bar';
 
 @Component({
   selector: 'app-characters-page',
   standalone: true,
-  imports: [RouterLink, BreadcrumbComponent, LoaderComponent],
+  imports: [RouterLink, BreadcrumbComponent, LoaderComponent, SearchBarComponent],
   templateUrl: './characters-page.html',
   styleUrl: './characters-page.css',
 })

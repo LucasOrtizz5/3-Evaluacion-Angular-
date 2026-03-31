@@ -181,7 +181,9 @@
 /* Shared UI Helpers */
 .app-navbar-surface {
   border-bottom: 1px solid var(--bs-primary);
-  background-color: var(--bg-dark-grey-2);
+  --bs-bg-opacity: 0.5;
+  --bs-navbar-bg: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.9) !important;
 }
 
 .img-cover-card {
