@@ -4,7 +4,7 @@
 }
 
 .episode-detail-shell {
-  min-height: 520px;
+  min-height: 0;
 }
 
 .episode-detail-panels-row {
@@ -37,6 +37,12 @@
   border-color: rgba(220, 53, 69, 0.85);
   background: rgba(220, 53, 69, 0.22);
   color: #fff;
+}
+
+.episode-favorite-btn:focus,
+.episode-favorite-btn:focus-visible {
+  outline: none;
+  box-shadow: none;
 }
 
 .episode-favorite-btn--active {

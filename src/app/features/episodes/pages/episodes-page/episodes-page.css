@@ -52,8 +52,20 @@
   justify-content: center;
   min-width: 2rem;
   padding-inline: 0.45rem;
+  border: none !important;
+  background: transparent;
   color: #f8f9fa;
   line-height: 1;
+}
+
+.episode-favorite-btn:hover,
+.episode-favorite-btn:active,
+.episode-favorite-btn:focus,
+.episode-favorite-btn:focus-visible {
+  border: none !important;
+  background: transparent;
+  outline: none !important;
+  box-shadow: none !important;
 }
 
 .episode-favorite-btn--active {

@@ -7,7 +7,7 @@
   [hasError]="hasProfileError()"
   errorMessage="No se pudo cargar la información del usuario."
   infoTitle="User Info"
-  contentTitle="Episodes"
+  contentTitle="Favorite episodes"
 >
   <div detail-info-actions class="d-flex gap-2 align-items-center">
     <button
@@ -131,22 +131,38 @@
 
   </div>
 
+  <div detail-content-actions>
+    @if (favoriteEpisodes().length > 0) {
+      <button
+        type="button"
+        class="btn btn-sm profile-icon-btn profile-action-btn"
+        (click)="toggleFavoritesEdition()"
+        [attr.aria-label]="isManagingFavorites ? 'Salir de modo eliminar favoritos' : 'Eliminar favoritos'"
+        [title]="isManagingFavorites ? 'Finalizar eliminación' : 'Eliminar favoritos'">
+        {{ isManagingFavorites ? '✓' : '✕' }}
+      </button>
+    }
+  </div>
+
   <div detail-content class="d-flex flex-column grow">
     @if (favoriteEpisodes().length > 0) {
       <div class="grow overflow-auto">
         @for (episode of visibleEpisodes(); track episode.id) {
           <div class="episode-item d-flex align-items-center justify-content-between gap-2 mb-1">
             <a [routerLink]="['/episodes', episode.id]" class="text-primary small text-decoration-none">
-              Episode {{ episode.id }} - {{ episode.name }}
+              Episodes {{ episode.id }} - {{ episode.name }}
             </a>
-            <button
-              type="button"
-              class="btn btn-sm profile-icon-btn profile-action-btn"
-              (click)="removeFavorite(episode.id)"
-              aria-label="Quitar favorito"
-              title="Quitar de favoritos">
-              ✕
-            </button>
+
+            @if (isManagingFavorites) {
+              <button
+                type="button"
+                class="btn btn-sm profile-icon-btn profile-action-btn"
+                (click)="removeFavorite(episode.id)"
+                aria-label="Quitar favorito"
+                title="Quitar de favoritos">
+                ✕
+              </button>
+            }
           </div>
         }
       </div>

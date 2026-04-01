@@ -59,8 +59,15 @@ export const routes: Routes = [
     path: 'locations',
     canActivate: [authGuard],
     loadComponent: () =>
-      import('./features/characters/pages/locations-page/locations-page')
+      import('./features/locations/pages/locations-page/locations-page')
         .then(m => m.LocationsPage)
+  },
+  {
+    path: 'locations/:id',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/locations/pages/location-detail-page/location-detail-page')
+        .then(m => m.LocationDetailPage)
   },
   // Redirect por defecto a characters (si está autenticado irá a characters, si no, el guard redirige a login)
   {

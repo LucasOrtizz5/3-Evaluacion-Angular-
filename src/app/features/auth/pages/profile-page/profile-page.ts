@@ -11,6 +11,7 @@ import { DetailLayoutComponent } from '../../../../shared/detail-layout/detail-l
 import { User } from '../../interfaces/user';
 import { EpisodeFavoritesService } from '../../../episodes/services/episode-favorites.service';
 import { FavoriteEpisode } from '../../../episodes/interfaces/episode.interface';
+import { createDetailPagination } from '../../../../shared/utils/detail-pagination';
 
 interface ProfileDraft {
   nickname: string;
@@ -49,18 +50,12 @@ export class ProfilePage implements OnInit, OnDestroy {
   });
 
   readonly favoriteEpisodes = computed<FavoriteEpisode[]>(() =>
-    this.episodeFavoritesService.favorites()
+    [...this.episodeFavoritesService.favorites()]
+      .sort((a, b) => a.id - b.id)
   );
-
-  readonly episodesPage = signal(1);
-  readonly episodesPerPage = 10;
-
-  readonly visibleEpisodes = computed(() => {
-    const end = this.episodesPage() * this.episodesPerPage;
-    return this.favoriteEpisodes().slice(0, end);
-  });
-
-  readonly hasMoreEpisodes = computed(() => this.visibleEpisodes().length < this.favoriteEpisodes().length);
+  private episodesPagination = createDetailPagination(this.favoriteEpisodes, 20);
+  readonly visibleEpisodes = this.episodesPagination.visibleItems;
+  readonly hasMoreEpisodes = this.episodesPagination.hasMore;
 
   readonly profileDisplayName = computed(() => this.user()?.name || 'Sin datos');
   readonly profileEmail = computed(() => this.user()?.email || 'Sin datos');
@@ -92,6 +87,7 @@ export class ProfilePage implements OnInit, OnDestroy {
   imageError = false;
   isEditingProfile = false;
   isEditingImage = false;
+  isManagingFavorites = false;
 
   constructor() {
     effect(() => {
@@ -248,11 +244,19 @@ export class ProfilePage implements OnInit, OnDestroy {
   }
 
   showMoreEpisodes(): void {
-    this.episodesPage.update(value => value + 1);
+    this.episodesPagination.showMore();
   }
 
   removeFavorite(episodeId: number): void {
     this.episodeFavoritesService.removeFavorite(episodeId);
+
+    if (this.favoriteEpisodes().length === 0) {
+      this.isManagingFavorites = false;
+    }
+  }
+
+  toggleFavoritesEdition(): void {
+    this.isManagingFavorites = !this.isManagingFavorites;
   }
 
   logout(): void {
