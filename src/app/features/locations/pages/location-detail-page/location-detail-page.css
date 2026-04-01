@@ -1,0 +1,102 @@
+.location-detail-shell {
+  min-height: 0;
+}
+
+.location-detail-panels-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.location-info-line {
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.location-info-value {
+  font-weight: 400;
+}
+
+.location-info-line--name,
+.location-info-value--name {
+  font-size: 1.04rem;
+}
+
+.location-resident-link {
+  color: var(--bs-primary);
+}
+
+.location-resident-link:hover,
+.location-resident-link:focus {
+  color: #56b4ff;
+}
+
+.residents-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.residents-list-item {
+  margin-bottom: 0.65rem;
+}
+
+.residents-list-item:last-child {
+  margin-bottom: 0;
+}
+
+.resident-row {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+}
+
+.resident-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 999px;
+  object-fit: cover;
+}
+
+.resident-meta {
+  min-width: 0;
+}
+
+.resident-name {
+  color: #f8f9fa;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.resident-subtitle {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.84rem;
+  color: #adb5bd;
+  line-height: 1.2;
+}
+
+.resident-status-dot {
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 999px;
+  display: inline-flex;
+  flex: 0 0 0.55rem;
+  align-self: center;
+}
+
+.resident-status-dot.text-success {
+  background-color: var(--bs-success);
+}
+
+.resident-status-dot.text-danger {
+  background-color: var(--bs-danger);
+}
+
+.resident-status-dot.text-warning {
+  background-color: var(--bs-warning);
+}

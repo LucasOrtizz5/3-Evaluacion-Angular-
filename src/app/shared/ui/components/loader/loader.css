@@ -1,0 +1,9 @@
+.loader-wrapper {
+  min-height: 180px;
+  flex-direction: column;
+}
+
+.loader-spinner {
+  width: 2.5rem;
+  height: 2.5rem;
+}

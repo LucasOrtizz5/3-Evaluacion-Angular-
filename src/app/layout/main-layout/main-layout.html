@@ -51,7 +51,7 @@
                (click)="closeNavbar()"
               routerLinkActive="active-nav-tab">
               Episodes
-              <span class="badge bg-danger ms-2">0</span>
+              <span class="badge bg-danger ms-2">{{ episodesCount() }}</span>
             </a>
           </li>
 
@@ -61,6 +61,7 @@
                (click)="closeNavbar()"
                routerLinkActive="active-nav-tab">
               Locations
+              <span class="badge bg-danger ms-2">{{ locationsCount() }}</span>
             </a>
           </li>
 
@@ -70,8 +71,7 @@
         <!-- DERECHA -->
         <div class="d-flex flex-column flex-lg-row">
           @if (isAuthenticated()) {
-            <span class="text-white px-lg-3 py-1">{{ user()?.name }}</span>
-            <span class="text-secondary px-lg-3 py-1 cursor-pointer" (click)="goToProfile()">Profile</span>
+            <span class="text-white px-lg-3 py-1 cursor-pointer" (click)="goToProfile()">{{ user()?.name }}</span>
             <span class="text-secondary px-lg-3 py-1 cursor-pointer" (click)="logout()">Log Out</span>
           }
         </div>

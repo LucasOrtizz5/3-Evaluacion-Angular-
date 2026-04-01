@@ -1,0 +1,66 @@
+<div class="container-xl mt-3">
+  <div class="mb-3">
+    <app-breadcrumb [items]="[
+      { label: 'Home', url: '/' },
+      { label: 'Episodes' }
+    ]"></app-breadcrumb>
+  </div>
+
+  <app-search-bar
+    placeholder="Search episodes..."
+    (search)="onSearch($event)">
+  </app-search-bar>
+
+  @if (isLoading()) {
+
+  <app-loader message="Cargando episodios..."></app-loader>
+
+  } @else if (hasError()) {
+
+  <div class="alert alert-danger">
+    No se pudieron cargar los episodios. Intenta recargar la página.
+  </div>
+
+  } @else {
+
+  <div class="row row-cols-1 row-cols-md-2 row-cols-lg-5 g-4">
+    @for (episode of visibleEpisodes(); track episode.id) {
+    <div class="col">
+      <div class="card bg-dark text-light border-0 h-100 episode-card ui-elevated-card">
+        <div class="card-body d-flex flex-column episode-card-link" [routerLink]="['/episodes', episode.id]">
+          <div class="episode-heading d-flex align-items-center justify-content-between mb-2">
+            <p class="episode-number mb-0">Episode {{ episode.id }}</p>
+            <button
+              type="button"
+              class="btn btn-sm episode-favorite-btn"
+              [class.episode-favorite-btn--active]="isFavorite(episode.id)"
+              [attr.aria-label]="isFavorite(episode.id) ? 'Quitar de favoritos' : 'Agregar a favoritos'"
+              (click)="toggleFavorite(episode, $event)">
+              {{ isFavorite(episode.id) ? '♥' : '♡' }}
+            </button>
+          </div>
+
+          <hr class="episode-separator ui-separator-edge my-1">
+          <p class="episode-name my-1 text-secondary">{{ episode.name }}</p>
+
+          <div class="episode-meta text-secondary mt-auto">
+            <p class="episode-code text-secondary mb-0">{{ episode.episode }}</p>
+            <p class="episode-date text-secondary mb-0">Air Date: {{ episode.air_date }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    }
+  </div>
+
+  }
+
+  <app-pagination-controls
+    [isLoading]="isLoading()"
+    [hasError]="hasError()"
+    [currentPage]="currentPage()"
+    [totalPages]="totalPages()"
+    [pages]="pages()"
+    (pageChange)="goToPage($event)">
+  </app-pagination-controls>
+</div>

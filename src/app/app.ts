@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { MainLayout } from './layout/main-layout/main-layout';
-import { GlobalLoaderComponent } from './shared/global-loader/global-loader';
-import { RouterLoaderService } from './shared/services/router-loader.service';
+import { GlobalLoaderComponent } from './shared/ui/components/global-loader/global-loader';
+import { RouterLoaderService } from './core/services/router-loader.service';
 
 @Component({
   selector: 'app-root',

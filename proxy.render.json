@@ -1,0 +1,11 @@
+{
+  "/api": {
+    "target": "https://rick-morty-api-qp95.onrender.com",
+    "secure": true,
+    "changeOrigin": true,
+    "logLevel": "debug",
+    "pathRewrite": {
+      "^/api": ""
+    }
+  }
+}

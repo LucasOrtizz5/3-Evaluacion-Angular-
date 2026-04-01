@@ -1,0 +1,159 @@
+<section class="card bg-black bg-opacity-50 text-secondary border-0 mt-4 p-4 episode-comments-card">
+  <div class="card bg-transparent text-secondary border-secondary episode-comments-inner">
+    <div class="card-header fw-bold border-secondary fs-5 d-flex align-items-center justify-content-between gap-3">
+      <div>
+        <div>Comments</div>
+        <small class="text-secondary fw-normal">Share feedback about this episode</small>
+      </div>
+
+      @if (canModerateThread()) {
+        <button
+          type="button"
+          class="btn btn-sm episode-comment-action-btn"
+          (click)="toggleThreadLock()"
+        >
+          {{ threadState().commentsLocked ? 'Enable comments' : 'Disable comments' }}
+        </button>
+      }
+    </div>
+
+    <div class="card-body p-0">
+      @if (!isAuthenticated()) {
+        <div class="alert alert-info m-4">
+          Inicia sesión para agregar, editar o eliminar tus comentarios.
+        </div>
+      }
+
+      @if (isAuthenticated() && !canWrite() && !canModerateThread()) {
+        <div class="alert alert-warning m-4">
+          Los comentarios están desactivados para este episodio.
+        </div>
+      }
+
+      <div class="comments-list">
+        @if (sortedComments().length > 0) {
+          @for (comment of visibleComments(); track comment.id) {
+            <article class="comment-item">
+              <div class="d-flex align-items-start gap-3">
+                <img
+                  [src]="getAvatarUrl(comment)"
+                  [alt]="comment.authorName"
+                  class="comment-avatar"
+                  (error)="onAvatarError(comment)"
+                >
+
+                <div class="grow min-w-0">
+                  <div class="d-flex align-items-center gap-2 mb-2">
+                    <span class="comment-author">{{ comment.authorName }}</span>
+                    @if (comment.authorRole === 'admin') {
+                      <span class="badge bg-danger">Admin</span>
+                    }
+                    @if (isOwnComment(comment)) {
+                      <span class="badge bg-primary">You</span>
+                    }
+
+                    @if (canEditComment(comment) || canDeleteComment(comment)) {
+                      <div class="comment-menu-container">
+                        <button
+                          type="button"
+                          class="comment-menu-btn"
+                          (click)="toggleMenu(comment.id, $event)"
+                        >
+                          ⋯
+                        </button>
+
+                        @if (openMenuId() === comment.id) {
+                          <div class="comment-menu-dropdown" (click)="closeMenu()">
+                            @if (canEditComment(comment)) {
+                              <button type="button" class="comment-menu-item" (click)="startEdit(comment); closeMenu()">
+                                Editar
+                              </button>
+                            }
+                            @if (canDeleteComment(comment)) {
+                              <button type="button" class="comment-menu-item comment-menu-item--danger" (click)="removeComment(comment); closeMenu()">
+                                Eliminar
+                              </button>
+                            }
+                            <button type="button" class="comment-menu-item" (click)="closeMenu()">
+                              Cancelar
+                            </button>
+                          </div>
+                        }
+                      </div>
+                    }
+                  </div>
+
+                  <p class="comment-text mb-2">{{ comment.content }}</p>
+
+                  <div class="comment-meta">
+                    <span class="comment-date">
+                      {{ formatDate(comment.updatedAt || comment.createdAt) }}
+                    </span>
+                    @if (comment.updatedAt !== comment.createdAt) {
+                      <span class="comment-edited">edited</span>
+                    }
+                  </div>
+                </div>
+              </div>
+            </article>
+          }
+
+          @if (hasMoreComments()) {
+            <div class="comment-more-wrap">
+              <button type="button" class="btn episode-comment-more-btn" (click)="showMoreComments()">
+                Show more comments
+              </button>
+            </div>
+          }
+        } @else {
+          <div class="comment-empty-state">
+            Todavía no hay comentarios para este episodio.
+          </div>
+        }
+      </div>
+
+      <div class="comments-input-wrap">
+        <form class="comments-input-bar" [formGroup]="commentForm" (ngSubmit)="submitComment()">
+          <input
+            id="comment-content"
+            type="text"
+            class="form-control comments-input-control"
+            formControlName="content"
+            [placeholder]="canWrite() ? 'Añade un comentario...' : 'Comments are disabled for the moment'"
+            [readonly]="!canWrite() && !canModerateThread()"
+          >
+
+          <button
+            type="submit"
+            class="btn btn-sm comments-submit-btn"
+            [disabled]="(!canWrite() && !canModerateThread()) || commentForm.invalid"
+          >
+            {{ editingCommentId() ? 'Guardar' : 'Publicar' }}
+          </button>
+
+          @if (editingCommentId()) {
+            <button
+              type="button"
+              class="btn btn-sm btn-outline-secondary"
+              (click)="cancelEdit()"
+            >
+              Cancelar
+            </button>
+          }
+        </form>
+
+        @if (commentForm.get('content')?.touched && commentForm.get('content')?.hasError('required')) {
+          <div class="text-warning small mt-2">El comentario no puede estar vacío.</div>
+        }
+
+        @if (commentForm.get('content')?.touched && commentForm.get('content')?.hasError('minlength')) {
+          <div class="text-warning small mt-2">El comentario debe tener al menos 3 caracteres.</div>
+        }
+
+        @if (commentForm.get('content')?.touched && commentForm.get('content')?.hasError('maxlength')) {
+          <div class="text-warning small mt-2">El comentario no puede superar los 500 caracteres.</div>
+        }
+      </div>
+    </div>
+  </div>
+</section>

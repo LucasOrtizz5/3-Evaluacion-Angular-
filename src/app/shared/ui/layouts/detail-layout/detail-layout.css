@@ -1,0 +1,24 @@
+.grow {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.detail-media-slot {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.detail-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.detail-header-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}

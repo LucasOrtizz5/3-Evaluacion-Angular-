@@ -1,12 +1,13 @@
-import {Component, inject, OnInit, signal, computed} from '@angular/core';
-import { BreadcrumbComponent } from '../../../../shared/breadcrumb/breadcrumb';
+import {Component, inject, OnInit, signal} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CharactersService } from '../../services/characters.service';
 import { Character } from '../../interfaces/character.interface';
 import { TranslatePipe } from '../../../../shared/pipes/translate-pipe';
 import { StatusColorPipe } from '../../../../shared/pipes/status-color-pipe';
 import { NgClass } from '@angular/common';
-import { LoaderComponent } from '../../../../shared/loader/loader';
+import { DetailLayoutComponent } from '../../../../shared/ui/layouts/detail-layout/detail-layout';
+import { createDetailPagination } from '../../../../shared/utils/detail-pagination';
+import { DetailMoreListComponent } from '../../../../shared/ui/components/detail-more-list/detail-more-list';
 
 interface Episode {
   id: number;
@@ -17,7 +18,7 @@ interface Episode {
 @Component({
   selector: 'app-character-detail-page',
   standalone: true,
-  imports: [BreadcrumbComponent, TranslatePipe, StatusColorPipe, NgClass, LoaderComponent],
+  imports: [DetailLayoutComponent, TranslatePipe, StatusColorPipe, NgClass, DetailMoreListComponent],
   templateUrl: './character-detail-page.html',
   styleUrl: './character-detail-page.css',
 })
@@ -31,20 +32,9 @@ export class CharacterDetailPage implements OnInit {
   hasError = signal(false);
 
   episodes = signal<Episode[]>([]);
-  episodesPage = signal(1);
-
-  episodesPerPage = 20; // valor fijo razonable
-
-  visibleEpisodes = computed(() => {
-    const page = this.episodesPage();
-    const perPage = this.episodesPerPage;
-    const start = (page - 1) * perPage;
-    return this.episodes().slice(start, start + perPage);
-  });
-
-  hasMoreEpisodes = computed(() => {
-    return this.episodesPage() * this.episodesPerPage < this.episodes().length;
-  });
+  private episodesPagination = createDetailPagination(this.episodes, 20);
+  visibleEpisodes = this.episodesPagination.visibleItems;
+  hasMoreEpisodes = this.episodesPagination.hasMore;
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
@@ -70,6 +60,7 @@ export class CharacterDetailPage implements OnInit {
               this.episodes.set(
                 Array.isArray(episodes) ? episodes : [episodes]
               );
+              this.episodesPagination.reset();
             });
         }
       },
@@ -81,6 +72,6 @@ export class CharacterDetailPage implements OnInit {
   }
 
   showMoreEpisodes() {
-    this.episodesPage.set(this.episodesPage() + 1);
+    this.episodesPagination.showMore();
   }
 }

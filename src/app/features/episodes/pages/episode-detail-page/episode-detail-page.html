@@ -1,0 +1,93 @@
+<div class="container-xl mt-3">
+  <div class="mb-3">
+    <app-breadcrumb [items]="[
+      { label: 'Home', url: '/' },
+      { label: 'Episodes', url: '/episodes' },
+      { label: episode() ? 'Episode ' + episode()!.id + ' - ' + episode()!.name : '' }
+    ]"></app-breadcrumb>
+  </div>
+
+  @if (isLoading()) {
+
+  <app-loader message="Cargando detalle del episodio..."></app-loader>
+
+  } @else if (hasError()) {
+
+  <div class="alert alert-danger">
+    No se pudo cargar el episodio. Intenta nuevamente en unos segundos.
+  </div>
+
+  } @else {
+
+  <div class="card bg-black bg-opacity-50 text-secondary border-0 mb-3 episode-detail-shell">
+    <div class="card-body p-4">
+      <div class="row align-items-stretch episode-detail-panels-row">
+        <div class="col-12 col-lg-6 d-flex">
+          <div class="card bg-transparent text-secondary border-secondary w-100 h-100">
+            <div class="card-header fw-bold border-secondary fs-5 d-flex align-items-center justify-content-between gap-2">
+              <span>Info of the episode</span>
+              <button
+                type="button"
+                class="btn btn-sm episode-favorite-btn"
+                [class.episode-favorite-btn--active]="isFavorite()"
+                [attr.aria-label]="isFavorite() ? 'Quitar de favoritos' : 'Agregar a favoritos'"
+                (click)="toggleFavorite()">
+                {{ isFavorite() ? '♥ Favorite' : '♡ Favorite' }}
+              </button>
+            </div>
+            <div class="card-body">
+              @if (episode()) {
+                <p class="mb-2 episode-info-line episode-info-line--name">
+                  <span>Name:</span>
+                  <span class="episode-info-value episode-info-value--name"> {{ episode()!.name }}</span>
+                </p>
+                <p class="mb-1 episode-info-line">
+                  <span>air date:</span>
+                  <span class="episode-info-value"> {{ episode()!.air_date }}</span>
+                </p>
+                <p class="mb-0 episode-info-line">
+                  <span>episode code:</span>
+                  <span class="episode-info-value"> {{ episode()!.episode }}</span>
+                </p>
+              }
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12 col-lg-6 d-flex">
+          <div class="card bg-transparent text-secondary border-secondary w-100 h-100">
+            <div class="card-header fw-bold border-secondary fs-5">
+              Characters in this episode
+            </div>
+            <div class="card-body d-flex flex-column">
+              <app-detail-more-list
+                [items]="visibleCharacters()"
+                [hasMore]="hasMoreCharacters()"
+                [itemTemplate]="characterItemTemplate"
+                emptyMessage="No characters available for this episode."
+                (more)="showMoreCharacters()">
+              </app-detail-more-list>
+
+              <ng-template #characterItemTemplate let-character>
+                <a
+                  [routerLink]="['/characters', character.id]"
+                  class="episode-character-link d-block small mb-0 text-decoration-none">
+                  {{ character.name }}
+                </a>
+              </ng-template>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  @if (episode()) {
+    <app-episode-comments-section
+      [episodeId]="episode()!.id"
+      [episodeTitle]="episode()!.name">
+    </app-episode-comments-section>
+  }
+
+  }
+</div>

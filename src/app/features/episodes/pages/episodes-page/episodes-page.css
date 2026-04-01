@@ -1,0 +1,56 @@
+.episode-number {
+  font-size: 1.1rem;
+  letter-spacing: 0.04em;
+  color: #f8f9fa;
+  font-weight: 500;
+}
+
+.episode-name {
+  font-size: 1.2rem;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.episode-code {
+  font-size: 0.96rem;
+}
+
+.episode-meta {
+  display: flex;
+  flex-direction: column;
+}
+
+.episode-date {
+  font-size: 0.96rem;
+}
+
+.episode-card-link {
+  cursor: pointer;
+}
+
+.episode-favorite-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2rem;
+  padding-inline: 0.45rem;
+  border: none !important;
+  background: transparent;
+  color: #f8f9fa;
+  line-height: 1;
+}
+
+.episode-favorite-btn:hover,
+.episode-favorite-btn:active,
+.episode-favorite-btn:focus,
+.episode-favorite-btn:focus-visible {
+  border: none !important;
+  background: transparent;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.episode-favorite-btn--active {
+  color: #dc3545;
+  border: none;
+}

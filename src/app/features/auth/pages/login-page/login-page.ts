@@ -1,7 +1,7 @@
 import { Component, inject, OnInit, OnDestroy } from '@angular/core';
 import { AuthService } from '../../services/auth';
 import { Router, RouterLink } from '@angular/router';
-import { RouterLoaderService } from '../../../../shared/services/router-loader.service';
+import { RouterLoaderService } from '../../../../core/services/router-loader.service';
 import { FormBuilder, Validators, ReactiveFormsModule, FormGroup } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs';

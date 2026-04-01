@@ -1,94 +1,183 @@
-<div class="background">
+<app-detail-layout
+  [breadcrumbItems]="[
+    { label: 'Home', url: '/' },
+    { label: 'Mi Perfil' }
+  ]"
+  [loading]="false"
+  [hasError]="hasProfileError()"
+  errorMessage="No se pudo cargar la información del usuario."
+  infoTitle="User Info"
+  contentTitle="Favorite episodes"
+>
+  <div detail-info-actions class="d-flex gap-2 align-items-center">
+    <button
+      type="button"
+      class="btn btn-sm profile-icon-btn profile-action-btn"
+      (click)="toggleProfileEditor()"
+      [attr.aria-label]="isEditingProfile ? 'Guardar datos' : 'Editar datos'"
+      [title]="isEditingProfile ? 'Guardar datos' : 'Editar datos'"
+    >
+      {{ isEditingProfile ? '✓' : '✎' }}
+    </button>
 
-  <div class="container auth-shell px-2 px-md-3 py-2 py-lg-3">
+    @if (isEditingProfile) {
+      <button
+        type="button"
+          class="btn btn-sm profile-icon-btn profile-action-btn"
+        (click)="cancelProfileEditor()"
+        aria-label="Cancelar edición de datos"
+        title="Cancelar"
+      >
+        ✕
+      </button>
+    }
+  </div>
 
-    <div class="row justify-content-center auth-layout auth-layout--center">
+  <div detail-media class="profile-avatar-shell position-relative d-flex align-items-center justify-content-center w-100 h-100">
+    <img
+      [src]="displayImageUrl()"
+      [alt]="profileDisplayName()"
+      class="img-fluid w-100 h-100 profile-avatar-image"
+      (error)="onProfileImageError()"
+    >
 
-      <div class="col-12 col-md-10 col-lg-6 auth-panel-col">
+    <button
+      type="button"
+      class="btn btn-sm profile-icon-btn profile-action-btn profile-image-edit-btn"
+      (click)="toggleImageEditor()"
+      [attr.aria-label]="isEditingImage ? 'Guardar URL de foto' : 'Editar foto de perfil'"
+      title="Editar foto"
+    >
+      ✎
+    </button>
 
-        <mat-card class="auth-card p-3 p-md-4">
+    @if (isEditingImage) {
+      <div class="profile-editor-panel profile-editor-panel--image p-3">
+        <form [formGroup]="imageForm" (ngSubmit)="saveImage()">
+          <label class="profile-label" for="profile-image-url">URL de imagen</label>
+          <input id="profile-image-url" class="form-control profile-input" type="url" formControlName="profileImageUrl" placeholder="https://...">
 
-          <mat-card-header class="text-center mb-4">
-            <mat-card-title>Mi Perfil</mat-card-title>
-          </mat-card-header>
+          @if (imageForm.get('profileImageUrl')?.touched && imageForm.get('profileImageUrl')?.hasError('required')) {
+            <div class="profile-error">La URL es obligatoria para guardar una foto personalizada.</div>
+          }
 
-          <mat-card-content>
+          @if (imageForm.get('profileImageUrl')?.touched && imageForm.get('profileImageUrl')?.hasError('pattern')) {
+            <div class="profile-error">Ingresá una URL válida (http/https).</div>
+          }
 
-            @if (user()) {
-            <form [formGroup]="profileForm" (ngSubmit)="handleSave()">
+          @if (imageError) {
+            <div class="profile-error">No se pudo guardar la foto, revisá la URL.</div>
+          }
 
-              <div class="row g-3">
-
-                <!-- Nombre -->
-                <div class="col-12 auth-field-group">
-                  <mat-form-field appearance="outline" class="w-100 mb-0">
-                    <mat-label>Nombre</mat-label>
-                    <input matInput type="text" formControlName="name">
-
-                    @if (profileForm.get('name')?.hasError('required')) {
-                    <mat-error>
-                      El nombre es obligatorio
-                    </mat-error>
-                    }
-                  </mat-form-field>
-                </div>
-
-                <!-- Email -->
-                <div class="col-12 auth-field-group">
-                  <mat-form-field appearance="outline" class="w-100 mb-0">
-                    <mat-label>Email</mat-label>
-                    <input matInput type="email" formControlName="email">
-
-                    @if (profileForm.get('email')?.hasError('required')) {
-                    <mat-error>
-                      El email es obligatorio
-                    </mat-error>
-                    }
-
-                    @if (profileForm.get('email')?.hasError('email')) {
-                    <mat-error>
-                      El formato del email no es válido
-                    </mat-error>
-                    }
-                  </mat-form-field>
-                </div>
-
-                <!-- Botones -->
-                <div class="col-12 d-flex flex-column flex-sm-row justify-content-center gap-3 mt-4">
-
-                  <button mat-raised-button color="primary" type="submit" class="px-5 py-2"
-                    [disabled]="profileForm.invalid">
-                    Guardar cambios
-                  </button>
-
-                  <button mat-raised-button color="warn" type="button" class="px-5 py-2" (click)="logout()">
-                    Cerrar sesión
-                  </button>
-
-                </div>
-
-                <!-- Error -->
-                @if (formError) {
-                <div class="col-12">
-
-                  <div class="form-alert">
-                    Por favor completá correctamente todos los campos.
-                  </div>
-
-                </div>
-                }
-              </div>
-            </form>
-            }
-
-          </mat-card-content>
-
-        </mat-card>
-
+          <div class="d-flex gap-2 mt-3">
+            <button type="submit" class="btn btn-sm profile-icon-btn profile-action-btn" aria-label="Guardar URL de foto" title="Guardar">
+              ✓
+            </button>
+            <button type="button" class="btn btn-sm profile-icon-btn profile-action-btn" (click)="cancelImageEditor()" aria-label="Cancelar edición de foto" title="Cancelar">
+              ✕
+            </button>
+            <button type="button" class="btn btn-sm profile-icon-btn profile-action-btn" (click)="removeProfilePhoto()" aria-label="Volver al placeholder" title="Restaurar placeholder">
+              ↺
+            </button>
+          </div>
+        </form>
       </div>
+    }
+  </div>
 
+  <div detail-info [formGroup]="profileForm">
+    <div class="profile-info-row mb-2">
+      <span class="profile-info-label">Name:</span>
+      <span class="profile-info-value">{{ profileDisplayName() }}</span>
     </div>
+
+    <div class="profile-info-row mb-2">
+      <span class="profile-info-label">Nickname:</span>
+      <span class="profile-info-value">
+      @if (isEditingProfile) {
+        <input id="profile-nickname" class="form-control form-control-sm profile-input profile-inline-input" type="text" formControlName="nickname">
+      } @else {
+        {{ profileNickname() }}
+      }
+      </span>
+    </div>
+
+    <div class="profile-info-row mb-2">
+      <span class="profile-info-label">Email:</span>
+      <span class="profile-info-value">{{ profileEmail() }}</span>
+    </div>
+
+    <div class="profile-info-row mb-2">
+      <span class="profile-info-label">Birth date:</span>
+      <span class="profile-info-value">{{ profileBirthDate() }}</span>
+    </div>
+
+    <div class="profile-info-row mb-0">
+      <span class="profile-info-label">Location:</span>
+      <span class="profile-info-value">
+      @if (isEditingProfile) {
+        <input id="profile-location" class="form-control form-control-sm profile-input profile-inline-input" type="text" formControlName="location">
+      } @else {
+        {{ profileLocation() }}
+      }
+      </span>
+    </div>
+
+    @if (isEditingProfile && formError) {
+      <div class="form-alert mt-3">
+        Por favor completá correctamente todos los campos.
+      </div>
+    }
 
   </div>
 
-</div>
+  <div detail-content-actions>
+    @if (favoriteEpisodes().length > 0) {
+      <button
+        type="button"
+        class="btn btn-sm profile-icon-btn profile-action-btn"
+        (click)="toggleFavoritesEdition()"
+        [attr.aria-label]="isManagingFavorites ? 'Salir de modo eliminar favoritos' : 'Eliminar favoritos'"
+        [title]="isManagingFavorites ? 'Finalizar eliminación' : 'Eliminar favoritos'">
+        {{ isManagingFavorites ? '✓' : '✕' }}
+      </button>
+    }
+  </div>
+
+  <div detail-content class="d-flex flex-column grow">
+    @if (favoriteEpisodes().length > 0) {
+      <div class="grow overflow-auto">
+        @for (episode of visibleEpisodes(); track episode.id) {
+          <div class="episode-item d-flex align-items-center justify-content-between gap-2 mb-1">
+            <a [routerLink]="['/episodes', episode.id]" class="text-primary small text-decoration-none">
+              Episodes {{ episode.id }} - {{ episode.name }}
+            </a>
+
+            @if (isManagingFavorites) {
+              <button
+                type="button"
+                class="btn btn-sm profile-icon-btn profile-action-btn"
+                (click)="removeFavorite(episode.id)"
+                aria-label="Quitar favorito"
+                title="Quitar de favoritos">
+                ✕
+              </button>
+            }
+          </div>
+        }
+      </div>
+    } @else {
+      <div class="grow d-flex align-items-center justify-content-center text-secondary">
+        Todavia no agregaste episodios favoritos.
+      </div>
+    }
+
+    @if (hasMoreEpisodes()) {
+      <div>
+        <button type="button" class="btn btn-link text-primary p-0 small" (click)="showMoreEpisodes()">
+          (more)
+        </button>
+      </div>
+    }
+  </div>
+</app-detail-layout>
