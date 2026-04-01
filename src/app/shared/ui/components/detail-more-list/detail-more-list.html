@@ -1,0 +1,24 @@
+@if (items.length > 0) {
+  <div class="detail-more-list-content u-flex-grow overflow-auto">
+    @for (item of items; track trackByItem($index, item); let index = $index) {
+      <ng-container
+        [ngTemplateOutlet]="itemTemplate"
+        [ngTemplateOutletContext]="{ $implicit: item, index: index }"
+      ></ng-container>
+    }
+  </div>
+
+  @if (hasMore) {
+    <div>
+      <button
+        type="button"
+        class="btn btn-link ui-more-btn"
+        (click)="onMore()"
+      >
+        {{ moreLabel }}
+      </button>
+    </div>
+  }
+} @else if (emptyMessage) {
+  <p class="mb-0 text-secondary">{{ emptyMessage }}</p>
+}

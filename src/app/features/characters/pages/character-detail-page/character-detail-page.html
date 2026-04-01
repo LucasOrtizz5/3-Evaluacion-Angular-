@@ -41,21 +41,18 @@
 
   <div detail-content class="d-flex flex-column grow">
     @if (character()) {
-      <div class="grow overflow-auto">
-        @for (ep of visibleEpisodes(); track ep.id) {
-          <div class="episode-item text-primary small mb-1">
-            Episode {{ ep.id }} - {{ ep.name }}
-          </div>
-        }
-      </div>
+      <app-detail-more-list
+        [items]="visibleEpisodes()"
+        [hasMore]="hasMoreEpisodes()"
+        [itemTemplate]="episodeItemTemplate"
+        (more)="showMoreEpisodes()">
+      </app-detail-more-list>
 
-      @if (hasMoreEpisodes()) {
-        <div>
-          <button class="btn btn-link text-primary p-0 small" (click)="showMoreEpisodes()">
-            (more)
-          </button>
+      <ng-template #episodeItemTemplate let-ep>
+        <div class="episode-item text-primary small mb-1">
+          Episode {{ ep.id }} - {{ ep.name }}
         </div>
-      }
+      </ng-template>
     }
   </div>
 </app-detail-layout>

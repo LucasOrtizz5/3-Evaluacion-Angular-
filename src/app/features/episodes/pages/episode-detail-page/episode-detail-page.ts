@@ -3,14 +3,15 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { CharacterPreview, Episode, FavoriteEpisode } from '../../interfaces/episode.interface';
 import { EpisodesService } from '../../services/episodes.service';
 import { EpisodeFavoritesService } from '../../services/episode-favorites.service';
-import { BreadcrumbComponent } from '../../../../shared/breadcrumb/breadcrumb';
-import { LoaderComponent } from '../../../../shared/loader/loader';
+import { BreadcrumbComponent } from '../../../../shared/ui/components/breadcrumb/breadcrumb';
+import { LoaderComponent } from '../../../../shared/ui/components/loader/loader';
 import { createDetailPagination } from '../../../../shared/utils/detail-pagination';
+import { DetailMoreListComponent } from '../../../../shared/ui/components/detail-more-list/detail-more-list';
 
 @Component({
   selector: 'app-episode-detail-page',
   standalone: true,
-  imports: [RouterLink, BreadcrumbComponent, LoaderComponent],
+  imports: [RouterLink, BreadcrumbComponent, LoaderComponent, DetailMoreListComponent],
   templateUrl: './episode-detail-page.html',
   styleUrl: './episode-detail-page.css'
 })

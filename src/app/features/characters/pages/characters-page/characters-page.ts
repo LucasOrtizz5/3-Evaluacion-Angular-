@@ -1,16 +1,17 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { CharactersService } from '../../services/characters.service';
 import { Character} from '../../interfaces/character.interface';
-import { computed } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { BreadcrumbComponent } from '../../../../shared/breadcrumb/breadcrumb';
-import { LoaderComponent } from '../../../../shared/loader/loader';
-import { SearchBarComponent } from '../../../../shared/search-bar/search-bar';
+import { BreadcrumbComponent } from '../../../../shared/ui/components/breadcrumb/breadcrumb';
+import { LoaderComponent } from '../../../../shared/ui/components/loader/loader';
+import { SearchBarComponent } from '../../../../shared/ui/components/search-bar/search-bar';
+import { PaginationControlsComponent } from '../../../../shared/ui/components/pagination-controls/pagination-controls';
+import { createListPagination } from '../../../../shared/utils/list-pagination';
 
 @Component({
   selector: 'app-characters-page',
   standalone: true,
-  imports: [RouterLink, BreadcrumbComponent, LoaderComponent, SearchBarComponent],
+  imports: [RouterLink, BreadcrumbComponent, LoaderComponent, SearchBarComponent, PaginationControlsComponent],
   templateUrl: './characters-page.html',
   styleUrl: './characters-page.css',
 })
@@ -29,11 +30,13 @@ export class CharactersPage implements OnInit {
   isLoading = signal(true);
   hasError = signal(false);
 
-  currentPage = signal(1);
-  totalPages = signal(0); // total de páginas locales
-  apiPage = signal(1); // página real de la API
+  private pagination = createListPagination();
 
-  searchTerm = signal('');
+  currentPage = this.pagination.currentPage;
+  totalPages = this.pagination.totalPages; // total de páginas locales
+  pages = this.pagination.pages;
+  apiPage = signal(1); // página real de la API
+  searchTerm = this.pagination.searchTerm;
 
   ngOnInit(): void {
     this.loadCharacters();
@@ -67,44 +70,18 @@ export class CharactersPage implements OnInit {
       });
   }
 
-  //Paginación
-  pages = computed(() => {
-    const total = this.totalPages();
-    const current = this.currentPage();
-    const windowSize = 3;
-
-    if (total === 0) return [];
-
-    let start = current - 1;
-    let end = current + 1;
-
-    if (current <= 2) {
-      start = 1;
-      end = Math.min(windowSize, total);
+  goToPage(page: number): void {
+    if (!this.pagination.setPage(page)) {
+      return;
     }
 
-    if (current >= total - 1) {
-      start = Math.max(total - 2, 1);
-      end = total;
-    }
-
-    const pagesArray = [];
-    for (let i = start; i <= end; i++) {
-      pagesArray.push(i);
-    }
-
-    return pagesArray;
-  });
-  goToPage(page: number) {
-    this.currentPage.set(page);
     this.loadCharacters();
   }
 
 
   //Busqueda por nombre
-  onSearch(term: string) {
-    this.searchTerm.set(term);
-    this.currentPage.set(1);
+  onSearch(term: string): void {
+    this.pagination.setSearchTerm(term);
     this.loadCharacters();
   }
 }

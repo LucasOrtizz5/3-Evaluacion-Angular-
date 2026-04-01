@@ -2,12 +2,12 @@ import { Component, computed, effect, inject, OnDestroy, OnInit, signal } from '
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth';
 import { Router, RouterLink } from '@angular/router';
-import { RouterLoaderService } from '../../../../shared/services/router-loader.service';
+import { RouterLoaderService } from '../../../../core/services/router-loader.service';
 import { FormBuilder, Validators, ReactiveFormsModule, FormGroup } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { DetailLayoutComponent } from '../../../../shared/detail-layout/detail-layout';
+import { DetailLayoutComponent } from '../../../../shared/ui/layouts/detail-layout/detail-layout';
 import { User } from '../../interfaces/user';
 import { EpisodeFavoritesService } from '../../../episodes/services/episode-favorites.service';
 import { FavoriteEpisode } from '../../../episodes/interfaces/episode.interface';

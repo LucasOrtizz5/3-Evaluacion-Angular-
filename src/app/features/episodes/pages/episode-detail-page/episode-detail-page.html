@@ -60,30 +60,21 @@
               Characters in this episode
             </div>
             <div class="card-body d-flex flex-column">
-              @if (characters().length > 0) {
-                <div class="grow overflow-auto">
-                  @for (character of visibleCharacters(); track character.id) {
-                    <a
-                      [routerLink]="['/characters', character.id]"
-                      class="episode-character-link d-block small mb-0 text-decoration-none">
-                      {{ character.name }}
-                    </a>
-                  }
-                </div>
+              <app-detail-more-list
+                [items]="visibleCharacters()"
+                [hasMore]="hasMoreCharacters()"
+                [itemTemplate]="characterItemTemplate"
+                emptyMessage="No characters available for this episode."
+                (more)="showMoreCharacters()">
+              </app-detail-more-list>
 
-                @if (hasMoreCharacters()) {
-                  <div>
-                    <button
-                      type="button"
-                      class="btn btn-link text-primary p-0 small"
-                      (click)="showMoreCharacters()">
-                      (more)
-                    </button>
-                  </div>
-                }
-              } @else {
-                <p class="mb-0 text-secondary">No characters available for this episode.</p>
-              }
+              <ng-template #characterItemTemplate let-character>
+                <a
+                  [routerLink]="['/characters', character.id]"
+                  class="episode-character-link d-block small mb-0 text-decoration-none">
+                  {{ character.name }}
+                </a>
+              </ng-template>
             </div>
           </div>
         </div>

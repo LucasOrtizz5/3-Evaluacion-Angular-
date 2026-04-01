@@ -5,8 +5,9 @@ import { Character } from '../../interfaces/character.interface';
 import { TranslatePipe } from '../../../../shared/pipes/translate-pipe';
 import { StatusColorPipe } from '../../../../shared/pipes/status-color-pipe';
 import { NgClass } from '@angular/common';
-import { DetailLayoutComponent } from '../../../../shared/detail-layout/detail-layout';
+import { DetailLayoutComponent } from '../../../../shared/ui/layouts/detail-layout/detail-layout';
 import { createDetailPagination } from '../../../../shared/utils/detail-pagination';
+import { DetailMoreListComponent } from '../../../../shared/ui/components/detail-more-list/detail-more-list';
 
 interface Episode {
   id: number;
@@ -17,7 +18,7 @@ interface Episode {
 @Component({
   selector: 'app-character-detail-page',
   standalone: true,
-  imports: [DetailLayoutComponent, TranslatePipe, StatusColorPipe, NgClass],
+  imports: [DetailLayoutComponent, TranslatePipe, StatusColorPipe, NgClass, DetailMoreListComponent],
   templateUrl: './character-detail-page.html',
   styleUrl: './character-detail-page.css',
 })

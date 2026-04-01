@@ -1,24 +1,6 @@
-.location-card {
-  position: relative;
-  border: 1px solid rgba(var(--bs-secondary-rgb), 0.25);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.location-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
-}
-
 .location-card-link {
   cursor: pointer;
   justify-content: flex-start;
-}
-
-.location-separator {
-  margin-left: -1rem;
-  margin-right: -1rem;
-  border-color: rgba(0, 0, 0, 0.8);
 }
 
 .location-name {

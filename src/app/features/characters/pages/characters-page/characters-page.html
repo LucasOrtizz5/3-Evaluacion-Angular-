@@ -42,34 +42,13 @@
 
   }
 
-  @if (!isLoading() && !hasError()) {
-
-  <nav class="d-flex justify-content-center mt-4">
-    <ul class="pagination">
-
-      <li class="page-item" [class.disabled]="currentPage() === 1">
-        <button class="page-link bg-black bg-opacity-50 border-0" (click)="goToPage(currentPage() - 1)" [disabled]="currentPage() === 1">
-          Previous
-        </button>
-      </li>
-
-      @for (page of pages(); track page) {
-      <li class="page-item" [class.active]="currentPage() === page">
-        <button class="page-link bg-black bg-opacity-50 border-0" (click)="goToPage(page)">
-          {{ page }}
-        </button>
-      </li>
-      }
-
-      <li class="page-item" [class.disabled]="currentPage() === totalPages()">
-        <button class="page-link bg-black bg-opacity-50 border-0" (click)="goToPage(currentPage() + 1)" [disabled]="currentPage() === totalPages()">
-          Next
-        </button>
-      </li>
-
-    </ul>
-  </nav>
-
-  }
+  <app-pagination-controls
+    [isLoading]="isLoading()"
+    [hasError]="hasError()"
+    [currentPage]="currentPage()"
+    [totalPages]="totalPages()"
+    [pages]="pages()"
+    (pageChange)="goToPage($event)">
+  </app-pagination-controls>
 
 </div>

@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { RouterLoaderService } from '../services/router-loader.service';
+import { RouterLoaderService } from '../../../../core/services/router-loader.service';
 
 @Component({
   selector: 'app-global-loader',

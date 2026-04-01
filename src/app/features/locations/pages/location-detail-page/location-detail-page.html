@@ -53,41 +53,32 @@
             Residents in this location
           </div>
           <div class="card-body d-flex flex-column">
-            @if (residents().length > 0) {
-              <div class="grow overflow-auto residents-list pe-1">
-                @for (resident of visibleResidents(); track resident.id) {
-                  <a
-                    [routerLink]="['/characters', resident.id]"
-                    class="location-resident-link text-decoration-none">
-                    <div class="resident-row">
-                      <img [src]="resident.image" [alt]="resident.name" class="resident-avatar">
-                      <div class="resident-meta">
-                        <p class="resident-name mb-0">{{ resident.name }}</p>
-                        <p class="resident-subtitle mb-0">
-                          <span class="resident-status-dot" [ngClass]="resident.status | statusColor"></span>
-                          <span>{{ resident.status }}</span>
-                          <span>-</span>
-                          <span>{{ resident.species }}</span>
-                        </p>
-                      </div>
-                    </div>
-                  </a>
-                }
-              </div>
+            <app-detail-more-list
+              [items]="visibleResidents()"
+              [hasMore]="hasMoreResidents()"
+              [itemTemplate]="residentItemTemplate"
+              emptyMessage="No residents available for this location."
+              (more)="showMoreResidents()">
+            </app-detail-more-list>
 
-              @if (hasMoreResidents()) {
-                <div>
-                  <button
-                    type="button"
-                    class="btn btn-link text-primary p-0 small"
-                    (click)="showMoreResidents()">
-                    (more)
-                  </button>
+            <ng-template #residentItemTemplate let-resident>
+              <a
+                [routerLink]="['/characters', resident.id]"
+                class="location-resident-link text-decoration-none residents-list-item d-block">
+                <div class="resident-row">
+                  <img [src]="resident.image" [alt]="resident.name" class="resident-avatar">
+                  <div class="resident-meta">
+                    <p class="resident-name mb-0">{{ resident.name }}</p>
+                    <p class="resident-subtitle mb-0">
+                      <span class="resident-status-dot" [ngClass]="resident.status | statusColor"></span>
+                      <span>{{ resident.status }}</span>
+                      <span>-</span>
+                      <span>{{ resident.species }}</span>
+                    </p>
+                  </div>
                 </div>
-              }
-            } @else {
-              <p class="mb-0 text-secondary">No residents available for this location.</p>
-            }
+              </a>
+            </ng-template>
           </div>
         </div>
       </div>

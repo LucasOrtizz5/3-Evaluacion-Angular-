@@ -1,17 +1,18 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { NgClass } from '@angular/common';
-import { BreadcrumbComponent } from '../../../../shared/breadcrumb/breadcrumb';
-import { LoaderComponent } from '../../../../shared/loader/loader';
+import { BreadcrumbComponent } from '../../../../shared/ui/components/breadcrumb/breadcrumb';
+import { LoaderComponent } from '../../../../shared/ui/components/loader/loader';
 import { createDetailPagination } from '../../../../shared/utils/detail-pagination';
 import { StatusColorPipe } from '../../../../shared/pipes/status-color-pipe';
 import { Location, LocationResident } from '../../interfaces/location.interface';
 import { LocationsService } from '../../services/locations.service';
+import { DetailMoreListComponent } from '../../../../shared/ui/components/detail-more-list/detail-more-list';
 
 @Component({
   selector: 'app-location-detail-page',
   standalone: true,
-  imports: [RouterLink, NgClass, BreadcrumbComponent, LoaderComponent, StatusColorPipe],
+  imports: [RouterLink, NgClass, BreadcrumbComponent, LoaderComponent, StatusColorPipe, DetailMoreListComponent],
   templateUrl: './location-detail-page.html',
   styleUrl: './location-detail-page.css'
 })

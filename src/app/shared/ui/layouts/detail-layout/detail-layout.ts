@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
-import { BreadcrumbComponent, BreadcrumbItem } from '../breadcrumb/breadcrumb';
-import { LoaderComponent } from '../loader/loader';
+import { BreadcrumbComponent, BreadcrumbItem } from '../../components/breadcrumb/breadcrumb';
+import { LoaderComponent } from '../../components/loader/loader';
 
 @Component({
   selector: 'app-detail-layout',

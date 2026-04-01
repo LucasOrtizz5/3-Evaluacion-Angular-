@@ -1,26 +1,8 @@
-.episode-card {
-  position: relative;
-  border: 1px solid rgba(var(--bs-secondary-rgb), 0.25);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.episode-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
-}
-
 .episode-number {
   font-size: 1.1rem;
   letter-spacing: 0.04em;
   color: #f8f9fa;
   font-weight: 500;
-}
-
-.episode-separator {
-  margin-left: -1rem;
-  margin-right: -1rem;
-  border-color: rgba(0, 0, 0, 0.8);
 }
 
 .episode-name {
