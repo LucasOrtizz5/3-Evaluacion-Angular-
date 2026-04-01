@@ -124,6 +124,18 @@ export class AuthService {
     return this.currentUserState();
   }
 
+  updateCurrentUser(patch: Partial<User>): void {
+    const currentUser = this.currentUserState();
+    if (!currentUser) {
+      return;
+    }
+
+    this.currentUserState.set({
+      ...currentUser,
+      ...patch,
+    });
+  }
+
   private fetchCurrentUser(): Observable<User | null> {
     return this.http
       .get<ApiResponse<User>>(`${this.apiUrl}/auth/me`, { withCredentials: true })

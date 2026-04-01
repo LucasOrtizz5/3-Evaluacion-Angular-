@@ -19,7 +19,7 @@
 
   } @else {
 
-  <div class="card bg-black bg-opacity-50 text-secondary border-0 mb-5 episode-detail-shell">
+  <div class="card bg-black bg-opacity-50 text-secondary border-0 mb-3 episode-detail-shell">
     <div class="card-body p-4">
       <div class="row align-items-stretch episode-detail-panels-row">
         <div class="col-12 col-lg-6 d-flex">
@@ -81,6 +81,13 @@
       </div>
     </div>
   </div>
+
+  @if (episode()) {
+    <app-episode-comments-section
+      [episodeId]="episode()!.id"
+      [episodeTitle]="episode()!.name">
+    </app-episode-comments-section>
+  }
 
   }
 </div>

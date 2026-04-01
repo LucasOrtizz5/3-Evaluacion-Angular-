@@ -7,11 +7,12 @@ import { BreadcrumbComponent } from '../../../../shared/ui/components/breadcrumb
 import { LoaderComponent } from '../../../../shared/ui/components/loader/loader';
 import { createDetailPagination } from '../../../../shared/utils/detail-pagination';
 import { DetailMoreListComponent } from '../../../../shared/ui/components/detail-more-list/detail-more-list';
+import { EpisodeCommentsSectionComponent } from '../../components/episode-comments-section/episode-comments-section';
 
 @Component({
   selector: 'app-episode-detail-page',
   standalone: true,
-  imports: [RouterLink, BreadcrumbComponent, LoaderComponent, DetailMoreListComponent],
+  imports: [RouterLink, BreadcrumbComponent, LoaderComponent, DetailMoreListComponent, EpisodeCommentsSectionComponent],
   templateUrl: './episode-detail-page.html',
   styleUrl: './episode-detail-page.css'
 })
@@ -22,7 +23,7 @@ export class EpisodeDetailPage implements OnInit {
 
   episode = signal<Episode | null>(null);
   characters = signal<CharacterPreview[]>([]);
-  private charactersPagination = createDetailPagination(this.characters, 20);
+  private charactersPagination = createDetailPagination(this.characters, 5);
   visibleCharacters = this.charactersPagination.visibleItems;
   hasMoreCharacters = this.charactersPagination.hasMore;
 
@@ -73,18 +74,14 @@ export class EpisodeDetailPage implements OnInit {
   private loadCharacters(characterUrls: string[]): void {
     if (!characterUrls.length) {
       this.characters.set([]);
+      this.charactersPagination.reset();
       this.isLoading.set(false);
       return;
     }
 
-    const ids = characterUrls
-      .map(url => url.split('/').pop())
-      .filter((value): value is string => !!value)
-      .join(',');
-
-    this.episodesService.getCharactersByIds(ids).subscribe({
+    this.episodesService.getCharactersByUrls(characterUrls).subscribe({
       next: (characters) => {
-        this.characters.set(Array.isArray(characters) ? characters : [characters]);
+        this.characters.set(characters);
         this.charactersPagination.reset();
         this.isLoading.set(false);
       },

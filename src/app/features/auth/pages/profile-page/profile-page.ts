@@ -210,6 +210,7 @@ export class ProfilePage implements OnInit, OnDestroy {
 
     const profileImageUrl = (this.imageForm.getRawValue().profileImageUrl || '').trim();
     this.draft.update(value => ({ ...value, profileImageUrl }));
+  this.authService.updateCurrentUser({ profileImageUrl });
     this.persistDraft();
     this.failedCustomImageUrl.set('');
 
@@ -229,6 +230,7 @@ export class ProfilePage implements OnInit, OnDestroy {
 
   removeProfilePhoto(): void {
     this.draft.update(value => ({ ...value, profileImageUrl: '' }));
+    this.authService.updateCurrentUser({ profileImageUrl: '' });
     this.persistDraft();
     this.failedCustomImageUrl.set('');
     this.imageError = false;
