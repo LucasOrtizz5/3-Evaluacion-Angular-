@@ -1,4 +1,4 @@
-<div class="d-flex flex-column min-vh-100">
+<div class="d-flex flex-column min-vh-100" (click)="closeUserMenu()">
 
   <!-- NAVBAR -->
   <nav class="navbar navbar-expand-lg navbar-dark px-2 py-2 app-navbar-surface">
@@ -71,8 +71,24 @@
         <!-- DERECHA -->
         <div class="d-flex flex-column flex-lg-row">
           @if (isAuthenticated()) {
-            <span class="text-white px-lg-3 py-1 cursor-pointer" (click)="goToProfile()">{{ user()?.name }}</span>
-            <span class="text-secondary px-lg-3 py-1 cursor-pointer" (click)="logout()">Log Out</span>
+            <div class="user-menu-wrap">
+              <button
+                type="button"
+                class="user-menu-trigger"
+                (click)="toggleUserMenu($event)">
+                {{ user()?.name }}
+              </button>
+
+              @if (isUserMenuOpen()) {
+                <div class="user-menu-dropdown" (click)="$event.stopPropagation()">
+                  <button type="button" class="user-menu-item" (click)="goToProfile()">Profile</button>
+                  @if (isAdmin()) {
+                    <button type="button" class="user-menu-item" (click)="goToAdminDashboard()">Dashboard</button>
+                  }
+                  <button type="button" class="user-menu-item user-menu-item--danger" (click)="logout()">Log Out</button>
+                </div>
+              }
+            </div>
           }
         </div>
 

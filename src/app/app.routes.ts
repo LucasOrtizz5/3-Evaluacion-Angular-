@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { guestGuard } from './features/auth/guards/guest-guard';
 import { authGuard } from './features/auth/guards/auth-guard';
+import { adminGuard } from './features/auth/guards/admin-guard';
 
 export const routes: Routes = [
   // Rutas de autenticación (solo para usuarios NO autenticados)
@@ -24,6 +25,13 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./features/auth/pages/profile-page/profile-page')
         .then(m => m.ProfilePage)
+  },
+  {
+    path: 'auth/admin-dashboard',
+    canActivate: [authGuard, adminGuard],
+    loadComponent: () =>
+      import('./features/auth/pages/admin-dashboard-page/admin-dashboard-page')
+        .then(m => m.AdminDashboardPage)
   },
   // Rutas de characters (solo para usuarios autenticados)
   {

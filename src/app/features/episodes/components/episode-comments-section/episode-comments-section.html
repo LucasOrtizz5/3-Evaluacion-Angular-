@@ -7,13 +7,16 @@
       </div>
 
       @if (canModerateThread()) {
-        <button
-          type="button"
-          class="btn btn-sm episode-comment-action-btn"
-          (click)="toggleThreadLock()"
-        >
-          {{ threadState().commentsLocked ? 'Enable comments' : 'Disable comments' }}
-        </button>
+        <div class="d-flex flex-column align-items-end gap-1">
+          <button
+            type="button"
+            class="btn btn-sm episode-comment-action-btn"
+            (click)="toggleThreadLock()"
+          >
+            {{ threadState().commentsLocked ? 'Enable new comments' : 'Disable new comments' }}
+          </button>
+          <small class="text-secondary">Los comentarios existentes se mantienen visibles.</small>
+        </div>
       }
     </div>
 
@@ -26,7 +29,7 @@
 
       @if (isAuthenticated() && !canWrite() && !canModerateThread()) {
         <div class="alert alert-warning m-4">
-          Los comentarios están desactivados para este episodio.
+          Los administradores desactivaron nuevos comentarios para este episodio. Los comentarios existentes siguen visibles.
         </div>
       }
 

@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { User } from '../interfaces/user';
 import { environment } from '../../../../environments/environment';
-import { catchError, firstValueFrom, map, Observable, of, switchMap, tap } from 'rxjs';
+import { catchError, finalize, firstValueFrom, map, Observable, of, switchMap, tap, timeout } from 'rxjs';
 
 interface ApiResponse<T> {
   header: {
@@ -29,6 +29,30 @@ export interface RegisterPayload {
   zip: string;
 }
 
+export interface UpdateProfilePayload {
+  nickname?: string;
+  birthDate?: string;
+  profileImageUrl?: string;
+}
+
+export interface AdminUserFavorite {
+  id: number;
+  name: string;
+  episode: string;
+  air_date: string;
+}
+
+export interface AdminUserWithFavorites {
+  id: string;
+  name: string;
+  email: string;
+  role: 'user' | 'admin';
+  nickname?: string;
+  birthDate?: string;
+  profileImageUrl?: string;
+  favorites: AdminUserFavorite[];
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -36,6 +60,7 @@ export class AuthService {
   private readonly http = inject(HttpClient);
   private readonly apiUrl = environment.apiUrl;
   private initPromise: Promise<void> | null = null;
+  private readonly authInitTimeoutMs = 10000;
 
   private readonly currentUserState = signal<User | null>(null);
   private readonly initializedState = signal(false);
@@ -52,13 +77,17 @@ export class AuthService {
     if (!this.initPromise) {
       this.initPromise = firstValueFrom(
         this.fetchCurrentUser().pipe(
+          timeout(this.authInitTimeoutMs),
           tap((user) => this.currentUserState.set(user)),
           map(() => void 0),
           catchError(() => {
             this.currentUserState.set(null);
             return of(void 0);
           }),
-          tap(() => this.initializedState.set(true))
+          tap(() => this.initializedState.set(true)),
+          finalize(() => {
+            this.initPromise = null;
+          })
         )
       );
     }
@@ -136,10 +165,30 @@ export class AuthService {
     });
   }
 
+  updateProfile(payload: UpdateProfilePayload): Observable<User> {
+    return this.http
+      .patch<ApiResponse<User>>(`${this.apiUrl}/users/profile`, payload, {
+        withCredentials: true,
+      })
+      .pipe(
+        map((response) => response.data),
+        tap((user) => this.currentUserState.set(user)),
+      );
+  }
+
+  getAdminUsersWithFavorites(): Observable<AdminUserWithFavorites[]> {
+    return this.http
+      .get<ApiResponse<AdminUserWithFavorites[]>>(`${this.apiUrl}/users/admin/favorites`, {
+        withCredentials: true,
+      })
+      .pipe(map((response) => response.data));
+  }
+
   private fetchCurrentUser(): Observable<User | null> {
     return this.http
       .get<ApiResponse<User>>(`${this.apiUrl}/auth/me`, { withCredentials: true })
       .pipe(
+        timeout(this.authInitTimeoutMs),
         map((response) => response.data),
         catchError(() => of(null))
       );

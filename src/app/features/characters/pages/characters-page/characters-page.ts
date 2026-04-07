@@ -37,6 +37,7 @@ export class CharactersPage implements OnInit {
   pages = this.pagination.pages;
   apiPage = signal(1); // página real de la API
   searchTerm = this.pagination.searchTerm;
+  private pendingScrollY: number | null = null;
 
   ngOnInit(): void {
     this.loadCharacters();
@@ -60,18 +61,23 @@ export class CharactersPage implements OnInit {
           const totalCharacters = response.info.count;
           this.totalPages.set(Math.ceil(totalCharacters / 10));
           this.isLoading.set(false);
+          this.restoreScrollPosition();
         },
         error: () => {
           this.characters.set([]);
           this.totalPages.set(0);
           this.hasError.set(true);
           this.isLoading.set(false);
+          this.restoreScrollPosition();
         }
       });
   }
 
   goToPage(page: number): void {
+    this.pendingScrollY = typeof window !== 'undefined' ? window.scrollY : null;
+
     if (!this.pagination.setPage(page)) {
+      this.pendingScrollY = null;
       return;
     }
 
@@ -83,5 +89,14 @@ export class CharactersPage implements OnInit {
   onSearch(term: string): void {
     this.pagination.setSearchTerm(term);
     this.loadCharacters();
+  }
+
+  private restoreScrollPosition(): void {
+    if (this.pendingScrollY === null || typeof window === 'undefined') {
+      return;
+    }
+
+    window.scrollTo({ top: this.pendingScrollY });
+    this.pendingScrollY = null;
   }
 }

@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, computed, effect, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../../../auth/services/auth';
-import { createFallbackAvatarUrl, resolveAvatarUrl, resolveStoredProfileAvatarUrl } from '../../../../shared/utils/avatar-url';
+import { createFallbackAvatarUrl, resolveAvatarUrl } from '../../../../shared/utils/avatar-url';
 import { EpisodeComment } from '../../interfaces/comment.interface';
 import { EpisodeCommentsService } from '../../services/episode-comments.service';
 
@@ -97,7 +97,7 @@ export class EpisodeCommentsSectionComponent implements OnChanges {
 
     const user = this.currentUser();
     if (user && this.isOwnComment(comment)) {
-      return resolveStoredProfileAvatarUrl(user.id, user.email, this.getUserSeed(user));
+      return resolveAvatarUrl(user.profileImageUrl, this.getUserSeed(user));
     }
 
     return resolveAvatarUrl(comment.authorAvatarUrl, comment.authorId);

@@ -25,20 +25,25 @@ export class MainLayout {
   readonly locationsCount = signal(0);
   readonly user = this.authService.currentUser;
   readonly isAuthenticated = this.authService.authenticated;
+  readonly isAdmin = signal(false);
   readonly isNavbarOpen = signal(false);
+  readonly isUserMenuOpen = signal(false);
 
   constructor() {
     effect(() => {
       if (this.isAuthenticated()) {
+        this.isAdmin.set(this.user()?.role === 'admin');
         this.loadCharactersCount();
         this.loadEpisodesCount();
         this.loadLocationsCount();
         return;
       }
 
+      this.isAdmin.set(false);
       this.charactersCount.set(0);
       this.episodesCount.set(0);
       this.locationsCount.set(0);
+      this.isUserMenuOpen.set(false);
     });
   }
 
@@ -80,14 +85,22 @@ export class MainLayout {
 
   logout(): void {
     this.authService.logout().subscribe(() => {
+      this.isUserMenuOpen.set(false);
       this.closeNavbar();
       this.router.navigate(['/auth/login']);
     });
   }
 
   goToProfile(): void {
+    this.isUserMenuOpen.set(false);
     this.closeNavbar();
     this.router.navigate(['/auth/profile']);
+  }
+
+  goToAdminDashboard(): void {
+    this.isUserMenuOpen.set(false);
+    this.closeNavbar();
+    this.router.navigate(['/auth/admin-dashboard']);
   }
 
   toggleNavbar(): void {
@@ -96,5 +109,15 @@ export class MainLayout {
 
   closeNavbar(): void {
     this.isNavbarOpen.set(false);
+    this.isUserMenuOpen.set(false);
+  }
+
+  toggleUserMenu(event: Event): void {
+    event.stopPropagation();
+    this.isUserMenuOpen.update((value) => !value);
+  }
+
+  closeUserMenu(): void {
+    this.isUserMenuOpen.set(false);
   }
 }
