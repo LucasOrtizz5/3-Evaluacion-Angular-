@@ -109,7 +109,13 @@
 
     <div class="profile-info-row mb-2">
       <span class="profile-info-label">Birth date:</span>
-      <span class="profile-info-value">{{ profileBirthDate() }}</span>
+      <span class="profile-info-value">
+      @if (isEditingProfile) {
+        <input id="profile-birth-date" class="form-control form-control-sm profile-input profile-inline-input" type="date" formControlName="birthDate">
+      } @else {
+        {{ profileBirthDate() }}
+      }
+      </span>
     </div>
 
     <div class="profile-info-row mb-0">

@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, OnDestroy, OnInit, signal } from '@angular/core';
+import { Component, computed, effect, inject, OnDestroy, OnInit, signal, untracked } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth';
 import { Router, RouterLink } from '@angular/router';
@@ -37,7 +37,6 @@ export class ProfilePage implements OnInit, OnDestroy {
   private episodeFavoritesService = inject(EpisodeFavoritesService);
 
   private subscriptions: Subscription[] = [];
-  private readonly localStoragePrefix = 'profile-draft:';
   private readonly maxCharacterAvatarId = 826;
 
   readonly user = this.authService.currentUser;
@@ -96,26 +95,31 @@ export class ProfilePage implements OnInit, OnDestroy {
         return;
       }
 
-      this.hydrateDraft(currentUser);
+      const previousLocation = untracked(() => this.draft().location);
+      const hydratedDraft = this.hydrateDraft(currentUser, previousLocation);
+      this.draft.set(hydratedDraft);
 
       if (this.profileForm) {
         this.profileForm.patchValue({
-          nickname: this.draft().nickname,
-          location: this.draft().location,
+          nickname: hydratedDraft.nickname,
+          birthDate: hydratedDraft.birthDate,
+          location: hydratedDraft.location,
         }, { emitEvent: false });
       }
 
       if (this.imageForm) {
         this.imageForm.patchValue({
-          profileImageUrl: this.draft().profileImageUrl,
+          profileImageUrl: hydratedDraft.profileImageUrl,
         }, { emitEvent: false });
       }
+
     });
   }
 
   ngOnInit(): void {
     this.profileForm = this.fb.group({
       nickname: [this.draft().nickname, [Validators.required, Validators.maxLength(25)]],
+      birthDate: [this.draft().birthDate],
       location: [this.draft().location, [Validators.required, Validators.maxLength(80)]],
     });
 
@@ -152,19 +156,37 @@ export class ProfilePage implements OnInit, OnDestroy {
     }
 
     const formValue = this.profileForm.getRawValue();
-    this.draft.update(value => ({
-      ...value,
-      nickname: (formValue.nickname || '').trim(),
-      location: (formValue.location || '').trim(),
-    }));
-    this.persistDraft();
+    const nickname = (formValue.nickname || '').trim();
+    const birthDate = (formValue.birthDate || '').trim();
+    const location = (formValue.location || '').trim();
 
-    this.formError = false;
-    this.isEditingProfile = false;
+    this.subscriptions.push(
+      this.authService
+        .updateProfile({ nickname, birthDate })
+        .subscribe({
+          next: (updatedUser) => {
+            this.draft.update(value => ({
+              ...value,
+              nickname: updatedUser.nickname || nickname,
+              birthDate: updatedUser.birthDate || birthDate,
+              location,
+              profileImageUrl: updatedUser.profileImageUrl || value.profileImageUrl,
+            }));
 
-    this.snackBar.open('Información personal actualizada localmente.', 'Cerrar', {
-      duration: 3000
-    });
+            this.formError = false;
+            this.isEditingProfile = false;
+
+            this.snackBar.open('Información personal actualizada.', 'Cerrar', {
+              duration: 3000
+            });
+          },
+          error: () => {
+            this.snackBar.open('No se pudo actualizar el perfil.', 'Cerrar', {
+              duration: 3000
+            });
+          }
+        })
+    );
   }
 
   toggleProfileEditor(): void {
@@ -176,6 +198,7 @@ export class ProfilePage implements OnInit, OnDestroy {
     this.isEditingProfile = true;
     this.profileForm.patchValue({
       nickname: this.draft().nickname,
+      birthDate: this.draft().birthDate,
       location: this.draft().location,
     }, { emitEvent: false });
   }
@@ -185,6 +208,7 @@ export class ProfilePage implements OnInit, OnDestroy {
     this.formError = false;
     this.profileForm.patchValue({
       nickname: this.draft().nickname,
+      birthDate: this.draft().birthDate,
       location: this.draft().location,
     }, { emitEvent: false });
   }
@@ -209,17 +233,33 @@ export class ProfilePage implements OnInit, OnDestroy {
     }
 
     const profileImageUrl = (this.imageForm.getRawValue().profileImageUrl || '').trim();
-    this.draft.update(value => ({ ...value, profileImageUrl }));
-  this.authService.updateCurrentUser({ profileImageUrl });
-    this.persistDraft();
-    this.failedCustomImageUrl.set('');
 
-    this.imageError = false;
-    this.isEditingImage = false;
+    this.subscriptions.push(
+      this.authService
+        .updateProfile({ profileImageUrl })
+        .subscribe({
+          next: (updatedUser) => {
+            this.draft.update(value => ({
+              ...value,
+              profileImageUrl: updatedUser.profileImageUrl || profileImageUrl,
+            }));
 
-    this.snackBar.open('Foto de perfil actualizada.', 'Cerrar', {
-      duration: 3000
-    });
+            this.failedCustomImageUrl.set('');
+            this.imageError = false;
+            this.isEditingImage = false;
+
+            this.snackBar.open('Foto de perfil actualizada.', 'Cerrar', {
+              duration: 3000
+            });
+          },
+          error: () => {
+            this.imageError = true;
+            this.snackBar.open('No se pudo actualizar la foto de perfil.', 'Cerrar', {
+              duration: 3000
+            });
+          }
+        })
+    );
   }
 
   cancelImageEditor(): void {
@@ -229,13 +269,24 @@ export class ProfilePage implements OnInit, OnDestroy {
   }
 
   removeProfilePhoto(): void {
-    this.draft.update(value => ({ ...value, profileImageUrl: '' }));
-    this.authService.updateCurrentUser({ profileImageUrl: '' });
-    this.persistDraft();
-    this.failedCustomImageUrl.set('');
-    this.imageError = false;
-    this.isEditingImage = false;
-    this.imageForm.patchValue({ profileImageUrl: '' }, { emitEvent: false });
+    this.subscriptions.push(
+      this.authService
+        .updateProfile({ profileImageUrl: '' })
+        .subscribe({
+          next: () => {
+            this.draft.update(value => ({ ...value, profileImageUrl: '' }));
+            this.failedCustomImageUrl.set('');
+            this.imageError = false;
+            this.isEditingImage = false;
+            this.imageForm.patchValue({ profileImageUrl: '' }, { emitEvent: false });
+          },
+          error: () => {
+            this.snackBar.open('No se pudo restaurar la foto de perfil.', 'Cerrar', {
+              duration: 3000
+            });
+          }
+        })
+    );
   }
 
   onProfileImageError(): void {
@@ -275,48 +326,15 @@ export class ProfilePage implements OnInit, OnDestroy {
     this.subscriptions.forEach(sub => sub.unsubscribe());
   }
 
-  private hydrateDraft(user: User): void {
-    const persisted = this.readDraftFromStorage(user);
+  private hydrateDraft(user: User, previousLocation: string): ProfileDraft {
     const baseLocation = [user.city, user.country].filter(Boolean).join(', ') || user.address || '';
 
-    this.draft.set({
-      nickname: persisted?.nickname || '',
-      birthDate: persisted?.birthDate || '',
-      location: persisted?.location || baseLocation,
-      profileImageUrl: persisted?.profileImageUrl || '',
-    });
-  }
-
-  private persistDraft(): void {
-    const user = this.user();
-    if (!user) {
-      return;
-    }
-
-    localStorage.setItem(this.getStorageKey(user), JSON.stringify(this.draft()));
-  }
-
-  private readDraftFromStorage(user: User): ProfileDraft | null {
-    const rawValue = localStorage.getItem(this.getStorageKey(user));
-    if (!rawValue) {
-      return null;
-    }
-
-    try {
-      const parsedValue = JSON.parse(rawValue) as Partial<ProfileDraft>;
-      return {
-        nickname: parsedValue.nickname ?? '',
-        birthDate: parsedValue.birthDate ?? '',
-        location: parsedValue.location ?? '',
-        profileImageUrl: parsedValue.profileImageUrl ?? '',
-      };
-    } catch {
-      return null;
-    }
-  }
-
-  private getStorageKey(user: User): string {
-    return `${this.localStoragePrefix}${user.id || user.email}`;
+    return {
+      nickname: user.nickname || '',
+      birthDate: user.birthDate || '',
+      location: previousLocation || baseLocation,
+      profileImageUrl: user.profileImageUrl || '',
+    };
   }
 
   private getAvatarCharacterId(seed: string): number {

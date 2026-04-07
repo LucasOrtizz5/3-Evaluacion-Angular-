@@ -1,13 +1,25 @@
 import { computed, effect, inject, Injectable, signal } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../../auth/services/auth';
 import { FavoriteEpisode } from '../interfaces/episode.interface';
+import { environment } from '../../../../environments/environment';
+import { catchError, map, of } from 'rxjs';
+
+interface ApiResponse<T> {
+  header: {
+    resultCode: number;
+    error?: string;
+  };
+  data: T;
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class EpisodeFavoritesService {
+  private readonly http = inject(HttpClient);
   private authService = inject(AuthService);
-  private readonly localStoragePrefix = 'favorite-episodes:';
+  private readonly apiUrl = `${environment.apiUrl}/episodes/favorites`;
 
   private favoritesState = signal<FavoriteEpisode[]>([]);
 
@@ -23,19 +35,7 @@ export class EpisodeFavoritesService {
         return;
       }
 
-      const storageKey = this.getStorageKey();
-      const rawValue = localStorage.getItem(storageKey);
-      if (!rawValue) {
-        this.favoritesState.set([]);
-        return;
-      }
-
-      try {
-        const parsedValue = JSON.parse(rawValue) as FavoriteEpisode[];
-        this.favoritesState.set(Array.isArray(parsedValue) ? parsedValue : []);
-      } catch {
-        this.favoritesState.set([]);
-      }
+      this.loadFavorites();
     });
   }
 
@@ -50,30 +50,45 @@ export class EpisodeFavoritesService {
     }
 
     this.favoritesState.update(current => [episode, ...current]);
-    this.persistFavorites();
+
+    this.http
+      .post<ApiResponse<FavoriteEpisode>>(this.apiUrl, episode, {
+        withCredentials: true,
+      })
+      .pipe(catchError(() => of(null)))
+      .subscribe((response) => {
+        if (!response) {
+          this.loadFavorites();
+        }
+      });
   }
 
   removeFavorite(episodeId: number): void {
     this.favoritesState.update(current =>
       current.filter(episode => episode.id !== episodeId)
     );
-    this.persistFavorites();
+
+    this.http
+      .delete<ApiResponse<unknown>>(`${this.apiUrl}/${episodeId}`, {
+        withCredentials: true,
+      })
+      .pipe(catchError(() => of(null)))
+      .subscribe((response) => {
+        if (!response) {
+          this.loadFavorites();
+        }
+      });
   }
 
-  private persistFavorites(): void {
-    const user = this.authService.currentUser();
-    if (!user) {
-      return;
-    }
-
-    localStorage.setItem(
-      this.getStorageKey(),
-      JSON.stringify(this.favoritesState())
-    );
-  }
-
-  private getStorageKey(): string {
-    const user = this.authService.currentUser();
-    return `${this.localStoragePrefix}${user?.id || user?.email || 'guest'}`;
+  private loadFavorites(): void {
+    this.http
+      .get<ApiResponse<FavoriteEpisode[]>>(this.apiUrl, {
+        withCredentials: true,
+      })
+      .pipe(
+        map((response) => response.data ?? []),
+        catchError(() => of([])),
+      )
+      .subscribe((favorites) => this.favoritesState.set(favorites));
   }
 }

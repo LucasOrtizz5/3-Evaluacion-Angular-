@@ -1,16 +1,31 @@
+import { HttpClient } from '@angular/common/http';
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { AuthService } from '../../auth/services/auth';
 import { User } from '../../auth/interfaces/user';
 import { EpisodeComment, EpisodeCommentThreadState } from '../interfaces/comment.interface';
-import { createFallbackAvatarUrl, resolveStoredProfileAvatarUrl } from '../../../shared/utils/avatar-url';
+import { environment } from '../../../../environments/environment';
+import { catchError, map, of } from 'rxjs';
+
+interface ApiResponse<T> {
+  header: {
+    resultCode: number;
+    error?: string;
+  };
+  data: T;
+}
+
+interface EpisodeCommentsApiData {
+  comments: EpisodeComment[];
+  thread: EpisodeCommentThreadState;
+}
 
 @Injectable({
   providedIn: 'root',
 })
 export class EpisodeCommentsService {
+  private readonly http = inject(HttpClient);
   private readonly authService = inject(AuthService);
-  private readonly commentsStoragePrefix = 'episode-comments:v1:';
-  private readonly threadStoragePrefix = 'episode-comments-thread:v1:';
+  private readonly apiUrl = `${environment.apiUrl}/episodes`;
 
   private readonly commentsState = signal<Record<number, EpisodeComment[]>>({});
   private readonly threadState = signal<Record<number, EpisodeCommentThreadState>>({});
@@ -23,20 +38,7 @@ export class EpisodeCommentsService {
       return;
     }
 
-    const storedComments = this.readComments(episodeId);
-    const storedThreadState = this.readThreadState(episodeId);
-
-    this.commentsState.update((state) => ({
-      ...state,
-      [episodeId]: storedComments,
-    }));
-
-    this.threadState.update((state) => ({
-      ...state,
-      [episodeId]: storedThreadState,
-    }));
-
-    this.loadedEpisodes.add(episodeId);
+    this.refreshEpisode(episodeId);
   }
 
   getComments(episodeId: number): EpisodeComment[] {
@@ -87,27 +89,29 @@ export class EpisodeCommentsService {
       return null;
     }
 
-    const timestamp = new Date().toISOString();
-    const comment: EpisodeComment = {
-      id: this.createId(),
-      episodeId,
-      authorId: this.getUserId(user),
-      authorName: user.name,
-      authorEmail: user.email,
-      authorRole: user.role === 'admin' ? 'admin' : 'user',
-      authorAvatarUrl: this.resolveAuthorAvatar(user),
-      content: normalizedContent,
-      createdAt: timestamp,
-      updatedAt: timestamp,
-    };
+    this.http
+      .post<ApiResponse<EpisodeComment>>(
+        `${this.apiUrl}/${episodeId}/comments`,
+        { content: normalizedContent },
+        { withCredentials: true },
+      )
+      .pipe(
+        map((response) => response.data),
+        catchError(() => of(null)),
+      )
+      .subscribe((createdComment) => {
+        if (!createdComment) {
+          this.refreshEpisode(episodeId);
+          return;
+        }
 
-    this.commentsState.update((state) => ({
-      ...state,
-      [episodeId]: [comment, ...(state[episodeId] ?? [])],
-    }));
+        this.commentsState.update((state) => ({
+          ...state,
+          [episodeId]: [createdComment, ...(state[episodeId] ?? [])],
+        }));
+      });
 
-    this.persistComments(episodeId);
-    return comment;
+    return null;
   }
 
   updateComment(episodeId: number, commentId: string, content: string): EpisodeComment | null {
@@ -124,19 +128,32 @@ export class EpisodeCommentsService {
       return null;
     }
 
-    const updatedComment: EpisodeComment = {
-      ...existingComment,
-      content: normalizedContent,
-      updatedAt: new Date().toISOString(),
-    };
+    this.http
+      .patch<ApiResponse<EpisodeComment>>(
+        `${this.apiUrl}/${episodeId}/comments/${commentId}`,
+        { content: normalizedContent },
+        { withCredentials: true },
+      )
+      .pipe(
+        map((response) => response.data),
+        catchError(() => of(null)),
+      )
+      .subscribe((updatedComment) => {
+        if (!updatedComment) {
+          this.refreshEpisode(episodeId);
+          return;
+        }
 
-    this.commentsState.update((state) => ({
-      ...state,
-      [episodeId]: state[episodeId]?.map((comment) => comment.id === commentId ? updatedComment : comment) ?? [],
-    }));
+        this.commentsState.update((state) => ({
+          ...state,
+          [episodeId]:
+            state[episodeId]?.map((comment) =>
+              comment.id === commentId ? updatedComment : comment,
+            ) ?? [],
+        }));
+      });
 
-    this.persistComments(episodeId);
-    return updatedComment;
+    return null;
   }
 
   deleteComment(episodeId: number, commentId: string): boolean {
@@ -153,7 +170,17 @@ export class EpisodeCommentsService {
       [episodeId]: state[episodeId]?.filter((comment) => comment.id !== commentId) ?? [],
     }));
 
-    this.persistComments(episodeId);
+    this.http
+      .delete<ApiResponse<unknown>>(`${this.apiUrl}/${episodeId}/comments/${commentId}`, {
+        withCredentials: true,
+      })
+      .pipe(catchError(() => of(null)))
+      .subscribe((response) => {
+        if (!response) {
+          this.refreshEpisode(episodeId);
+        }
+      });
+
     return true;
   }
 
@@ -181,7 +208,28 @@ export class EpisodeCommentsService {
       [episodeId]: nextThread,
     }));
 
-    this.persistThreadState(episodeId);
+    this.http
+      .patch<ApiResponse<EpisodeCommentThreadState>>(
+        `${this.apiUrl}/${episodeId}/comments/thread-lock/toggle`,
+        {},
+        { withCredentials: true },
+      )
+      .pipe(
+        map((response) => response.data),
+        catchError(() => of(null)),
+      )
+      .subscribe((thread) => {
+        if (!thread) {
+          this.refreshEpisode(episodeId);
+          return;
+        }
+
+        this.threadState.update((state) => ({
+          ...state,
+          [episodeId]: thread,
+        }));
+      });
+
     return nextThread;
   }
 
@@ -191,65 +239,6 @@ export class EpisodeCommentsService {
       episodeId,
       commentsLocked: false,
     };
-  }
-
-  private resolveAuthorAvatar(user: User): string {
-    return resolveStoredProfileAvatarUrl(user.id, user.email, this.getUserId(user));
-  }
-
-  private persistComments(episodeId: number): void {
-    localStorage.setItem(
-      this.getCommentsStorageKey(episodeId),
-      JSON.stringify(this.getComments(episodeId))
-    );
-  }
-
-  private readComments(episodeId: number): EpisodeComment[] {
-    const rawValue = localStorage.getItem(this.getCommentsStorageKey(episodeId));
-    if (!rawValue) {
-      return [];
-    }
-
-    try {
-      const parsedValue = JSON.parse(rawValue) as EpisodeComment[];
-      return Array.isArray(parsedValue) ? parsedValue : [];
-    } catch {
-      return [];
-    }
-  }
-
-  private persistThreadState(episodeId: number): void {
-    localStorage.setItem(
-      this.getThreadStorageKey(episodeId),
-      JSON.stringify(this.getThreadState(episodeId))
-    );
-  }
-
-  private readThreadState(episodeId: number): EpisodeCommentThreadState {
-    const rawValue = localStorage.getItem(this.getThreadStorageKey(episodeId));
-    if (!rawValue) {
-      return {
-        episodeId,
-        commentsLocked: false,
-      };
-    }
-
-    try {
-      const parsedValue = JSON.parse(rawValue) as Partial<EpisodeCommentThreadState>;
-      return {
-        episodeId,
-        commentsLocked: Boolean(parsedValue.commentsLocked),
-        lockedByUserId: parsedValue.lockedByUserId,
-        lockedByUserName: parsedValue.lockedByUserName,
-        lockedByUserRole: parsedValue.lockedByUserRole,
-        lockedAt: parsedValue.lockedAt,
-      };
-    } catch {
-      return {
-        episodeId,
-        commentsLocked: false,
-      };
-    }
   }
 
   private isAdmin(user: User): boolean {
@@ -264,19 +253,35 @@ export class EpisodeCommentsService {
     return user.id || user.email || 'guest-user';
   }
 
-  private createId(): string {
-    if (typeof crypto !== 'undefined' && 'randomUUID' in crypto) {
-      return crypto.randomUUID();
-    }
+  private refreshEpisode(episodeId: number): void {
+    this.http
+      .get<ApiResponse<EpisodeCommentsApiData>>(`${this.apiUrl}/${episodeId}/comments`, {
+        withCredentials: true,
+      })
+      .pipe(
+        map((response) => response.data),
+        catchError(() =>
+          of<EpisodeCommentsApiData>({
+            comments: [],
+            thread: {
+              episodeId,
+              commentsLocked: false,
+            },
+          }),
+        ),
+      )
+      .subscribe((payload) => {
+        this.commentsState.update((state) => ({
+          ...state,
+          [episodeId]: payload.comments,
+        }));
 
-    return `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
-  }
+        this.threadState.update((state) => ({
+          ...state,
+          [episodeId]: payload.thread,
+        }));
 
-  private getCommentsStorageKey(episodeId: number): string {
-    return `${this.commentsStoragePrefix}${episodeId}`;
-  }
-
-  private getThreadStorageKey(episodeId: number): string {
-    return `${this.threadStoragePrefix}${episodeId}`;
+        this.loadedEpisodes.add(episodeId);
+      });
   }
 }

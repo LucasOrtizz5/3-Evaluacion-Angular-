@@ -1,5 +1,12 @@
 import { Injectable, inject, signal } from '@angular/core';
-import { Router, NavigationStart, NavigationEnd, NavigationError } from '@angular/router';
+import {
+  Router,
+  NavigationStart,
+  NavigationEnd,
+  NavigationError,
+  NavigationCancel,
+  NavigationSkipped,
+} from '@angular/router';
 import { filter } from 'rxjs';
 
 @Injectable({
@@ -25,7 +32,13 @@ export class RouterLoaderService {
 
     this.router.events
       .pipe(
-        filter(event => event instanceof NavigationEnd || event instanceof NavigationError)
+        filter(
+          (event) =>
+            event instanceof NavigationEnd ||
+            event instanceof NavigationError ||
+            event instanceof NavigationCancel ||
+            event instanceof NavigationSkipped,
+        )
       )
       .subscribe(() => {
         this.isLoading.set(false);

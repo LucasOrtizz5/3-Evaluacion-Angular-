@@ -1,0 +1,75 @@
+<div class="container-xl mt-3">
+  <div class="mb-3">
+    <app-breadcrumb
+      [items]="[
+        { label: 'Home', url: '/' },
+        { label: 'Admin dashboard' }
+      ]"
+    ></app-breadcrumb>
+  </div>
+
+  <section class="card bg-black bg-opacity-50 text-secondary border-0 mt-4 p-4 admin-dashboard-card">
+    <div class="card bg-transparent text-secondary border-secondary admin-dashboard-inner">
+      <div class="card-header fw-bold border-secondary fs-5">
+        Usuarios y episodios favoritos
+      </div>
+
+      <div class="card-body p-0">
+      @if (isLoading()) {
+        <div class="small text-secondary p-4">Cargando usuarios...</div>
+      } @else if (hasError()) {
+        <div class="alert alert-danger m-4 mb-0">
+          No se pudo cargar el panel de administración.
+        </div>
+      } @else if (users().length === 0) {
+        <div class="small text-secondary p-4">No hay usuarios para mostrar.</div>
+      } @else {
+        <div class="admin-users-list">
+          @for (adminUser of visibleUsers(); track adminUser.id) {
+            <article class="admin-user-item">
+              <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
+                <span class="fw-semibold text-light">{{ adminUser.name }}</span>
+                <span class="small">({{ adminUser.email }})</span>
+                <span
+                  class="badge"
+                  [class.bg-danger]="adminUser.role === 'admin'"
+                  [class.bg-secondary]="adminUser.role !== 'admin'"
+                >
+                  {{ adminUser.role }}
+                </span>
+              </div>
+
+              <div class="admin-user-favorites-wrap">
+                <app-detail-more-list
+                  [items]="getVisibleFavorites(adminUser)"
+                  [hasMore]="hasMoreFavorites(adminUser)"
+                  [emptyMessage]="'Sin favoritos guardados.'"
+                  [moreLabel]="'Show more favorites'"
+                  [itemTemplate]="favoriteTemplate"
+                  (more)="showMoreFavorites(adminUser.id)"
+                ></app-detail-more-list>
+
+                <ng-template #favoriteTemplate let-favorite>
+                  <div class="admin-favorite-item small">
+                    <a [routerLink]="['/episodes', favorite.id]" class="text-decoration-none">
+                      Episode {{ favorite.id }} - {{ favorite.name }}
+                    </a>
+                  </div>
+                </ng-template>
+              </div>
+            </article>
+          }
+
+          @if (hasMoreUsers()) {
+            <div class="comment-more-wrap">
+              <button type="button" class="btn episode-comment-more-btn" (click)="showMoreUsers()">
+                Show more users
+              </button>
+            </div>
+          }
+        </div>
+      }
+      </div>
+    </div>
+  </section>
+</div>
