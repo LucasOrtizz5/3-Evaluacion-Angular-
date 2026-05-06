@@ -67,6 +67,18 @@
                         Password is required
                       </mat-error>
                       }
+
+                      @if (registerForm.get('password')?.hasError('minlength')) {
+                      <mat-error>
+                        Password must be at least 6 characters
+                      </mat-error>
+                      }
+
+                      @if (registerForm.get('password')?.hasError('passwordStrength')) {
+                      <mat-error>
+                        Password must contain at least one uppercase letter and one number
+                      </mat-error>
+                      }
                     </mat-form-field>
 
                     @if (showPasswordRequirements && registerForm.get('password')?.value) {

@@ -1,59 +1,69 @@
-# EvaluacionAngular2
+# Aplicacion Rick&Morty Frontend
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.1.5.
+Frontend desarrollado con Angular 21 para explorar personajes, episodios y ubicaciones de Rick and Morty, con autenticacion, perfil de usuario, favoritos y panel administrativo.
 
-## Development server
+## Requisitos
 
-To start a local development server, run:
+- Node.js 20+
+- npm 10+
 
-```bash
-ng serve
-```
-
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+## Instalacion
 
 ```bash
-ng generate component component-name
+npm install
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## Variables de entorno
+
+La app utiliza los archivos de entorno en `src/environments/`.
+
+- `environment.ts`: entorno local por defecto.
+- `environment.remote.ts`: backend remoto.
+- `environment.remote.proxy.ts`: remoto usando proxy local (`proxy.render.json`).
+- `environment.prod.ts` y `environment.prod.remote.ts`: produccion.
+
+## Scripts principales
 
 ```bash
-ng generate --help
+# Desarrollo local
+npm start
+
+# Desarrollo contra backend remoto
+npm run start:remote
+
+# Desarrollo remoto con proxy
+npm run start:remote-proxy
+
+# Build de produccion local
+npm run build
+
+# Build de produccion remoto
+npm run build:remote
 ```
 
-## Building
-
-To build the project run:
+## Testing
 
 ```bash
-ng build
+# Unit tests (Vitest)
+npm test
+
+# Cypress E2E (headless)
+npm run cypress:run
+
+# Cypress Component (headless)
+npm run cypress:run:component
+
+# Cypress modo interactivo
+npm run cypress:open
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+## Estructura de testing
 
-## Running unit tests
+- `cypress/e2e/`: pruebas end-to-end por feature (`auth`, `dashboard`, `episodes`, etc.).
+- `src/app/**/**/*.cy.ts`: pruebas de componentes junto al componente.
+- `cypress/e2e/support/mocks.js`: mocks reutilizables de API para escenarios de prueba.
 
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+## Notas
 
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+- El backend se configura por entorno; revisar `BACKEND_HANDOFF.md` para detalles de integracion.
+- Para despliegue, se incluyen configuraciones de `vercel.json` y `proxy.render.json`.
