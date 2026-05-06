@@ -32,5 +32,7 @@ declare global {
 
 Cypress.Commands.add('mount', mount)
 
+export {};
+
 // Example use:
 // cy.mount(MyComponent)
