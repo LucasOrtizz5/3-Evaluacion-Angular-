@@ -41,10 +41,13 @@
     "tslib": "^2.3.0"
   },
   "devDependencies": {
+    "@angular-devkit/build-angular": "^21.2.9",
     "@angular/build": "^21.1.5",
     "@angular/cli": "^21.1.5",
     "@angular/compiler-cli": "^21.1.0",
     "@angular/material": "^21.2.0",
+    "@angular/platform-browser-dynamic": "^21.2.11",
+    "cypress": "^15.14.2",
     "jsdom": "^27.1.0",
     "typescript": "~5.9.2",
     "vitest": "^4.0.8"

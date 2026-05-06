@@ -22,7 +22,7 @@
                 <div class="col-12 auth-field-group">
                   <label class="auth-field-label mb-2">Email address</label>
                   <mat-form-field appearance="outline" class="w-100 mb-0">
-                    <input matInput type="email" formControlName="email" placeholder="email@example.com">
+                    <input matInput type="email" formControlName="email" placeholder="email@example.com" data-cy="email-input">
 
                     @if (loginForm.get('email')?.hasError('required')) {
                     <mat-error>
@@ -42,7 +42,7 @@
                 <div class="col-12 auth-field-group">
                   <label class="auth-field-label">Password</label>
                   <mat-form-field appearance="outline" class="w-100 mb-0">
-                    <input matInput type="password" formControlName="password" placeholder="Password">
+                    <input matInput type="password" formControlName="password" placeholder="Password" data-cy="password-input">
 
                     @if (loginForm.get('password')?.hasError('required')) {
                     <mat-error>
@@ -66,7 +66,7 @@
                 <!-- Botón -->
                 <div class="col-12 d-flex justify-content-start">
                   <div class="m2-login-button-theme">
-                    <button mat-raised-button color="primary" type="submit">
+                    <button mat-raised-button color="primary" type="submit" data-cy="login-submit-btn">
                       Sign In
                     </button>
                   </div>
