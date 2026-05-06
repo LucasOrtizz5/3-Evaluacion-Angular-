@@ -14,7 +14,17 @@ export default defineConfig({
     devServer: {
       framework: "angular",
       bundler: "webpack",
+      options: {
+        projectConfig: {
+          root: "",
+          sourceRoot: "src",
+          buildOptions: {
+            tsConfig: "tsconfig.cypress.json",
+          },
+        },
+      },
     },
     specPattern: "**/*.cy.ts",
+    supportFile: "cypress/support/component.ts",
   },
 });

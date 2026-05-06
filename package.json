@@ -11,7 +11,11 @@
     "build:vercel": "ng build --configuration production",
     "build:remote": "ng build --configuration production-remote",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "cypress:open": "cypress open",
+    "cypress:run": "cypress run",
+    "cypress:run:e2e": "cypress run --e2e",
+    "cypress:run:component": "cypress run --component"
   },
   "prettier": {
     "printWidth": 100,
